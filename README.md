@@ -1,19 +1,25 @@
 🔬 Soc(IA)-Mineração: Uma Lente Sociológica sobre a Inovação Pública
+
 Este repositório contém o código-fonte do Soc(IA)-Mineração, uma ferramenta de pesquisa desenvolvida como parte da tese de doutorado: "UMA LENTE SOCIOLÓGICA SOBRE A GOVERNANÇA DA INOVAÇÃO NOS INSTITUTOS FEDERAIS: INTERFACES ANALÍTICAS PARA UMA COMPREENSÃO DO “SOCIAL” NA INOVAÇÃO PÚBLICA".
 A ferramenta utiliza Processamento de Linguagem Natural (PLN) e arquitetura RAG (Retrieval-Augmented Generation) para realizar auditorias sociológicas e decoloniais em produções científicas e documentos institucionais.
+
 🚀 Funcionalidades Principais
+
 🌐 Aba 1: Pesquisa Web (OpenAlex)
 Mineração de Dados: Integração com a API OpenAlex para extração de produções sobre Sociologia da Inovação.
 Análise Cienciométrica: Visualização de DNA Científico, evolução temporal e distribuição por idiomas.
 Inteligência Analítica: Geração de fichamentos estruturados e análise de tendências epistemológicas (Otimismo Tecnológico vs. Crítica-Reflexiva).
 Exportação: Geração de relatórios individuais em PDF com referências automáticas no padrão ABNT (NBR 6023).
+
 📚 Aba 2: Auditoria Decolonial (Biblioteca Local)
 Arquitetura RAG: Indexação local de documentos em PDF utilizando ChromaDB.
 Lente Decolonial: Prompt estruturado para identificar mimetismo tecnológico e relações de poder entre o IFBA e agências de fomento.
 Soberania de Dados: Todo o processamento dos documentos sensíveis é feito localmente via Ollama.
+
 ☁️ Sincronização Mestra
 Backup Estratégico: Sincronização automática de bases mineradas e relatórios consolidados para o Google Drive.
 Relatório do Dia: Função de "cesto de análises" que consolida todas as investigações diárias em um único documento de auditoria.
+
 🛠️ Requisitos Técnicos
 Modelos de Linguagem (LLMs) via Ollama
 Para o pleno funcionamento, certifique-se de ter instalado os seguintes modelos:
