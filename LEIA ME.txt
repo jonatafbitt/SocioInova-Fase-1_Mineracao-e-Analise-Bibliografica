@@ -1,0 +1,44 @@
+======================================================================
+SISTEMA DE APOIO À TESE: SOCIOLOGIA DA INOVAÇÃO NOS IFS
+Pesquisador: Jonatã França Bittencourt
+======================================================================
+
+1. COMO INICIAR O SISTEMA
+----------------------------------------------------------------------
+Acesse a pasta C:\Users\jonat\analise_ifs e execute o arquivo:
+> iniciar_pesquisa.bat
+
+Isso ativará o ambiente virtual (venv) e abrirá o menu principal.
+
+2. FLUXO DE TRABALHO DIÁRIO
+----------------------------------------------------------------------
+Passo 1: Minerar novos dados (Opção 1 no menu).
+Passo 2: Abrir o Dashboard (Opção 3 no menu ou 'streamlit run app_principal.py').
+Passo 3: Analisar artigos com o Ollama e gerar PDFs de auditoria.
+
+3. RESOLUÇÃO DE PROBLEMAS (TROUBLESHOOTING)
+----------------------------------------------------------------------
+ERRO: "Modulo não encontrado" (ModuleNotFoundError)
+SOLUÇÃO: O ambiente virtual não está ativo. No terminal, rode: 
+.\venv\Scripts\activate e depois pip install -r requirements.txt
+
+ERRO: "Erro ao conectar ao Ollama"
+SOLUÇÃO: Verifique se o aplicativo Ollama está aberto na barra de tarefas.
+Tente rodar 'ollama list' no terminal para ver se os modelos estão lá.
+
+ERRO: "Arquivo CSV não encontrado"
+SOLUÇÃO: Você precisa rodar o minerador (scripts/minerador_openalex.py) 
+pelo menos uma vez para criar a base inicial em /data.
+
+4. MODELOS DE IA UTILIZADOS
+----------------------------------------------------------------------
+- Llama 3: Modelo principal para análise decolonial e governança.
+- Mistral: Modelo de auditoria para comparação de resultados.
+Certifique-se de ter ambos baixados: 'ollama pull llama3' e 'ollama pull mistral'.
+
+5. ESTRUTURA DE PASTAS
+----------------------------------------------------------------------
+/data      -> Armazena o CSV com os artigos minerados.
+/scripts   -> Contém a lógica do minerador e da auditoria.
+/relatorios -> Armazena os PDFs gerados para a tese.
+/venv      -> Ambiente isolado do Python.

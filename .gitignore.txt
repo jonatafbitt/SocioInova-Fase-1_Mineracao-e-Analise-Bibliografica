@@ -1,0 +1,27 @@
+# --- Segurança e Credenciais ---
+# Não suba suas chaves do Google Cloud!
+client_secrets.json
+token.json
+credentials.json
+settings.yaml
+dict_drive.json
+
+# --- Dados da Tese (Privacidade) ---
+# Impede que os PDFs institucionais do IFBA e os bancos de dados saiam da sua máquina
+meus_pdfs/
+data/vector_db/
+Relatorio_Consolidado_SocIA.pdf
+*.pdf
+*.csv
+
+# --- Ambiente Virtual e Python ---
+# Pastas de sistema e bibliotecas locais
+venv/
+.env
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# --- Arquivos Temporários do Sistema ---
+.DS_Store
+Thumbs.db

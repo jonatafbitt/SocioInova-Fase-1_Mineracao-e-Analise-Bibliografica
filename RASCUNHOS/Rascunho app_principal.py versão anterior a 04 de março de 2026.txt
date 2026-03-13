@@ -1,0 +1,170 @@
+import streamlit as st
+import pandas as pd
+import os
+import ollama
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import OllamaEmbeddings
+
+# --- CONFIGURAÇÕES DE CAMINHOS ---
+PASTA_DATA = "data/producoes_mineradas.csv"
+PASTA_PDFS = "meus_pdfs"
+DB_DIR = "data/vector_db"
+
+# Configuração da Página
+st.set_page_config(page_title="Observatório de Inovação - IFBA", layout="wide")
+
+# --- INTERFACE LATERAL ---
+st.sidebar.title("🔬 Gestão de Pesquisa")
+modelo_ia = st.sidebar.selectbox(
+    "Cérebro da IA (LLM):", 
+    ["phi3", "llama3", "mistral"], 
+    help="Phi-3: Muito mais rápido para processamento de textos e indexação."
+)
+
+st.sidebar.divider()
+if st.sidebar.button("☁️ Sincronizar com Google Drive"):
+    st.sidebar.info("Executando scripts/execucao_mestre.py...")
+    os.system("python scripts/execucao_mestre.py")
+    st.sidebar.success("Sincronização Concluída!")
+
+# --- CORPO PRINCIPAL ---
+st.title("🎓 Observatório de Sociologia da Inovação")
+aba_web, aba_local = st.tabs(["🌐 Pesquisa OpenAlex", "📚 Minha Biblioteca (PDFs)"])
+
+# --- ABA 1: PESQUISA WEB (OPENALEX / SCOPUS) ---
+with aba_web:
+    if not os.path.exists(PASTA_DATA):
+        st.error("Base de dados não encontrada. Rode o minerador primeiro.")
+    else:
+        df = pd.read_csv(PASTA_DATA)
+        
+        # --- MAPEAMENTO DINÂMICO DE COLUNAS (Evita KeyError) ---
+        colunas_possiveis = {
+            'ano': ['ano', 'publication_year', 'year'],
+            'titulo': ['titulo', 'title', 'display_name'],
+            'autores': ['autores', 'authors', 'author_names'],
+            'resumo': ['resumo', 'abstract', 'description']
+        }
+        
+        colunas_encontradas = {}
+        for chave, lista in colunas_possiveis.items():
+            encontrada = next((c for c in lista if c in df.columns), None)
+            colunas_encontradas[chave] = encontrada
+
+        # Lista de colunas para exibição na tabela (apenas as que existem)
+        colunas_visiveis = [v for k, v in colunas_encontradas.items() if v and k != 'resumo']
+
+        st.subheader(f"Base de Dados: {len(df)} produções encontradas")
+        
+        # Filtro de Busca
+        col_tit = colunas_encontradas['titulo'] if colunas_encontradas['titulo'] else df.columns[0]
+        busca = st.text_input(f"Filtrar por {col_tit}:")
+        
+        df_filtrado = df[df[col_tit].str.contains(busca, case=False, na=False)] if busca else df
+        
+        st.dataframe(df_filtrado[colunas_visiveis].head(10), use_container_width=True)
+
+        st.divider()
+        st.header("🤖 Inteligência Analítica")
+        
+        selecao = st.selectbox("Selecione uma obra para análise profunda:", df_filtrado[col_tit].tolist())
+        
+        if selecao:
+            art = df_filtrado[df_filtrado[col_tit] == selecao].iloc[0]
+            col_res = colunas_encontradas['resumo']
+            
+            if col_res and pd.notna(art[col_res]):
+                texto_analise = art[col_res]
+                col_fich, col_pos = st.columns(2)
+                
+                with col_fich:
+                    st.subheader("📝 Fichamento Estruturado")
+                    if st.button("🚀 Gerar Fichamento Ágil"):
+                        with st.spinner(f"Processando com {modelo_ia.upper()}..."):
+                            prompt_fich = f"""
+                            Realize o fichamento acadêmico estruturado (Objetivo, Metodologia, Achados) do resumo abaixo. 
+                            Use linguagem sociológica:
+                            "{texto_analise}"
+                            """
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_fich}])
+                            st.info(f"Análise via {modelo_ia.upper()}")
+                            st.markdown(resp['message']['content'])
+
+                with col_pos:
+                    st.subheader("⚖️ Viés Epistemológico")
+                    if st.button("🔍 Analisar Tendência"):
+                        with st.spinner(f"Avaliando com {modelo_ia.upper()}..."):
+                            prompt_sent = f"""
+                            Analise o posicionamento teórico deste resumo: "{texto_analise}"
+                            Classifique em: 1. OTIMISTA TECNOLÓGICO ou 2. CRÍTICO-REFLEXIVO.
+                            Justifique e dê um 'Termômetro de Crítica' (0-100%).
+                            """
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_sent}])
+                            st.warning(f"Avaliação via {modelo_ia.upper()}")
+                            st.markdown(resp['message']['content'])
+            else:
+                st.warning("Resumo não disponível para esta obra.")
+
+# --- ABA 2: MINHA BIBLIOTECA (PDFs LOCAIS) ---
+with aba_local:
+    st.header("📚 Assistente de Leitura de PDFs")
+    st.write("Converse com seus arquivos locais utilizando busca semântica.")
+
+    if st.button("🔄 Escanear e Indexar Pasta 'meus_pdfs'"):
+        if not os.path.exists(PASTA_PDFS) or not os.listdir(PASTA_PDFS):
+            st.error("A pasta 'meus_pdfs' está vazia.")
+        else:
+            arquivos = [f for f in os.listdir(PASTA_PDFS) if f.endswith(".pdf")]
+            barra = st.progress(0)
+            status = st.empty()
+            documentos = []
+
+            with st.spinner("Indexando biblioteca..."):
+                for i, arq in enumerate(arquivos):
+                    status.markdown(f"📖 **Lendo ({i+1}/{len(arquivos)}):** `{arq}`")
+                    barra.progress((i + 1) / len(arquivos))
+                    try:
+                        loader = PyPDFLoader(os.path.join(PASTA_PDFS, arq))
+                        documentos.extend(loader.load())
+                    except Exception as e:
+                        st.warning(f"Erro ao ler {arq}: {e}")
+                
+                status.markdown("✂️ **Fragmentando textos...**")
+                text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=100)
+                splits = text_splitter.split_documents(documentos)
+                
+                status.markdown(f"🧠 **Gerando vetores com {modelo_ia.upper()} (Modo Rápido)...**")
+                Chroma.from_documents(
+                    documents=splits, 
+                    embedding=OllamaEmbeddings(model=modelo_ia), 
+                    persist_directory=DB_DIR
+                )
+                
+                barra.empty()
+                status.empty()
+                st.success(f"✅ Sucesso! {len(splits)} trechos indexados de {len(arquivos)} PDFs.")
+
+    st.divider()
+    pergunta = st.text_input("💬 Pergunte algo à sua biblioteca:")
+    if pergunta:
+        if not os.path.exists(DB_DIR):
+            st.error("Por favor, indexe seus PDFs primeiro.")
+        else:
+            with st.spinner("Buscando fontes relevantes..."):
+                vector_db = Chroma(persist_directory=DB_DIR, embedding_function=OllamaEmbeddings(model=modelo_ia))
+                docs = vector_db.similarity_search(pergunta, k=3)
+                contexto = "\n\n".join([d.page_content for d in docs])
+                
+                prompt_rag = f"Use o contexto abaixo para responder à pergunta:\n\nContexto: {contexto}\n\nPergunta: {pergunta}"
+                # Llama 3 é excelente para consolidar a resposta final
+                final_resp = ollama.chat(model="llama3", messages=[{'role': 'user', 'content': prompt_rag}])
+                
+                st.markdown("### 🤖 Resposta da IA:")
+                st.markdown(final_resp['message']['content'])
+                
+                with st.expander("Ver trechos originais consultados"):
+                    for d in docs:
+                        st.write(f"**Fonte:** {d.metadata.get('source', 'Desconhecida')}")
+                        st.write(d.page_content[:400] + "...")

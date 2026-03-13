@@ -1,0 +1,23 @@
+# --- Interface e Dashboards ---
+streamlit
+plotly
+
+# --- Mineração de Dados e Requisições ---
+requests
+pandas
+
+# --- Inteligência Artificial e RAG (LangChain + Ollama) ---
+ollama
+langchain
+langchain-community
+langchain-text-splitters
+chromadb
+pypdf
+
+# --- Geração de Relatórios e Auditoria ---
+fpdf2
+
+# --- Integração com Google Drive (Opcional) ---
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

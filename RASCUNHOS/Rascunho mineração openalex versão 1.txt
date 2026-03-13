@@ -1,0 +1,60 @@
+import requests
+import pandas as pd
+import json
+import os
+
+def reconstruir_abstract(inverted_index):
+    if not inverted_index:
+        return "Resumo não disponível."
+    try:
+        max_pos = max([pos for positions in inverted_index.values() for pos in positions])
+        texto_reconstruido = [None] * (max_pos + 1)
+        for palavra, posicoes in inverted_index.items():
+            for pos in posicoes:
+                texto_reconstruido[pos] = palavra
+        return ' '.join([palavra for palavra in texto_reconstruido if palavra is not None])
+    except Exception:
+        return "Erro ao processar resumo."
+
+def executar_mineracao(termo="Sociology of Innovation", limite=100):
+    url = "https://api.openalex.org/works"
+    params = {
+        'search': termo,
+        'per_page': limite,
+        'sort': 'cited_by_count:desc'
+    }
+    
+    print(f"Buscando '{termo}' no OpenAlex...")
+    response = requests.get(url, params=params)
+    
+    if response.status_code == 200:
+        results = response.json().get('results', [])
+        lista_obras = []
+        
+        for obra in results:
+            resumo = reconstruir_abstract(obra.get('abstract_inverted_index'))
+            lista_obras.append({
+                'id': obra.get('id'),
+                'titulo': obra.get('display_name'),
+                'ano': obra.get('publication_year'),
+                'citacoes': obra.get('cited_by_count'),
+                'doi': obra.get('doi'),
+                'resumo': resumo
+            })
+        
+        # Salvar em CSV para o Dashboard
+        df = pd.DataFrame(lista_obras)
+        caminho_csv = os.path.join('data', 'producoes_mineradas.csv')
+        df.to_csv(caminho_csv, index=False, encoding='utf-8')
+        
+        print(f"Sucesso! {len(df)} artigos salvos em {caminho_csv}")
+        return df
+    else:
+        print(f"Erro na API: {response.status_code}")
+        return None
+
+if __name__ == "__main__":
+    # Garante que a pasta data existe
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    executar_mineracao()

@@ -1,0 +1,33 @@
+import shutil
+from datetime import datetime
+import os
+
+def realizar_backup():
+    data = datetime.now().strftime("%Y-%m-%d")
+    nome_arquivo = f"backup_tese_inovacao_{data}"
+    
+    # Pastas para incluir no ZIP
+    pastas = ["./documentos_if", "./memoria_longo_prazo"]
+    arquivos = ["memoria_pesquisa.json", "matriz_extracao_tese.csv"]
+    
+    # Criar uma pasta temporária para o backup
+    if not os.path.exists(nome_arquivo):
+        os.makedirs(nome_arquivo)
+    
+    # Copia as pastas e arquivos
+    for p in pastas:
+        if os.path.exists(p):
+            shutil.copytree(p, os.path.join(nome_arquivo, os.path.basename(p)))
+            
+    for a in arquivos:
+        if os.path.exists(a):
+            shutil.copy(a, nome_arquivo)
+            
+    # Compacta tudo
+    shutil.make_archive(nome_arquivo, 'zip', nome_arquivo)
+    
+    # Limpa a pasta temporária
+    shutil.rmtree(nome_arquivo)
+    print(f"✅ Backup concluído: {nome_arquivo}.zip")
+
+realizar_backup()

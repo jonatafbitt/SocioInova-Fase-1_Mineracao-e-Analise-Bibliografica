@@ -1,0 +1,111 @@
+import requests
+import pandas as pd
+import os
+
+# ======================================================
+# CONFIGURAÇÃO DE TERMOS MULTILINGUES (Doutorado)
+# ======================================================
+
+# Grupos de termos: O script buscará (Traduções Conceito A) AND (Traduções Conceito B)
+# Isso garante que o artigo trate do tema, independente do idioma.
+
+conceitos = {
+    "sociologia_inovacao": [
+        '"Sociology of Innovation"', '"Sociologia da Inovação"', 
+        '"Sociologie de l\'innovation"', '"Sociología de la innovación"', 
+        '"Innovationssoziologie"'
+    ],
+    "inovacao_social": [
+        '"Social Innovation"', '"Inovação Social"', 
+        '"Innovation Sociale"', '"Innovación Social"', 
+        '"Soziale Innovation"'
+    ],
+    "institutos_federais": [
+        '"Federal Institute"', '"Institutos Federais"', 
+        '"Vocational Education"', '"Rede Federal"'
+    ],
+    "teoria_decolonial": [
+        '"Decolonial theory"', '"Teoria Decolonial"', 
+        '"Théorie décoloniale"', '"Teoría decolonial"'
+    ],
+    "local": [
+        '"Brazil"', '"Brasil"', '"Brésil"'
+    ]
+}
+
+# Montagem automática da Query Booleana Complexa
+# Resultado esperado: (termo1 OR termo2) AND (termo3 OR termo4)
+query_parts = []
+for lista in conceitos.values():
+    query_parts.append(f"({' OR '.join(lista)})")
+
+QUERY_FINAL = " AND ".join(query_parts)
+LIMITE_RESULTADOS = 150 # Aumentado para cobrir a diversidade de idiomas
+# ======================================================
+
+def reconstruir_abstract(inverted_index):
+    if not inverted_index:
+        return "Resumo não disponível."
+    try:
+        max_pos = max([pos for positions in inverted_index.values() for pos in positions])
+        texto_reconstruido = [None] * (max_pos + 1)
+        for palavra, posicoes in inverted_index.items():
+            for pos in posicoes:
+                texto_reconstruido[pos] = palavra
+        return ' '.join([palavra for palavra in texto_reconstruido if palavra is not None])
+    except Exception:
+        return "Erro ao processar resumo."
+
+def executar_mineracao(termo=QUERY_FINAL, limite=LIMITE_RESULTADOS):
+    url = "https://api.openalex.org/works"
+    params = {
+        'search': termo,
+        'per_page': limite,
+        'sort': 'cited_by_count:desc'
+    }
+    
+    print(f"🛰️ Iniciando mineração multilingue no OpenAlex...")
+    print(f"🔍 Query Complexa: {termo[:100]}...") # Mostra apenas o início para não poluir
+    
+    try:
+        response = requests.get(url, params=params, timeout=30)
+        response.raise_for_status()
+        
+        results = response.json().get('results', [])
+        lista_obras = []
+        
+        for obra in results:
+            resumo = reconstruir_abstract(obra.get('abstract_inverted_index'))
+            autores_lista = [a.get('author', {}).get('display_name') for a in obra.get('authorships', [])]
+            autores_str = ", ".join([a for a in autores_lista if a])
+
+            lista_obras.append({
+                'id': obra.get('id'),
+                'titulo': obra.get('display_name'),
+                'ano': obra.get('publication_year'),
+                'autores': autores_str,
+                'citacoes': obra.get('cited_by_count'),
+                'doi': obra.get('doi'),
+                'resumo': resumo,
+                'idioma': obra.get('language')
+            })
+        
+        if not lista_obras:
+            print("⚠️ Nenhum resultado encontrado. Tente simplificar os grupos de conceitos.")
+            return None
+
+        df = pd.DataFrame(lista_obras)
+        caminho_csv = os.path.join('data', 'producoes_mineradas.csv')
+        df.to_csv(caminho_csv, index=False, encoding='utf-8')
+        
+        print(f"✅ SUCESSO: {len(df)} artigos (PT/EN/FR/ES/DE) salvos.")
+        return df
+
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Erro na API: {e}")
+        return None
+
+if __name__ == "__main__":
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    executar_mineracao()
