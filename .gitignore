@@ -1,0 +1,30 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyw
+
+# Data files - CSVs and databases (should be gitignored for large data)
+data/producoes_mineradas.csv
+data/perfil_institucional.csv
+data/vector_db/
+memoria_longo_prazo/chroma.sqlite3
+memoria_longo_prazo/*.pickle
+memoria_longo_prazo/*.bin
+
+# Backups
+*.zip
+backup_*.tse
+
+# Prompts (versões temporárias ou de teste)
+prompts/*.txt
+
+# Streamlit debug
+.st_repl_state/
+
+# Office files
+*.xlsx
+*.docx
+
+# Temporary
+tmp/

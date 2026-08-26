@@ -9,6 +9,20 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
 from fpdf import FPDF
 import base64
+import json
+import os
+from pathlib import Path
+
+# Caminho para prompts
+PROMPTS_DIR = Path(__file__).parent / "prompts"
+
+def carregar_prompt(nome_arquivo):
+    """Carrega um prompt do diretório prompts/."""
+    prompt_file = PROMPTS_DIR / nome_arquivo
+    if prompt_file.exists():
+        with open(prompt_file, "r", encoding="utf-8") as f:
+            return f.read()
+    return ""  # Retorna vazio se arquivo não existir
 
 # --- 1. INICIALIZAÇÃO DO ESTADO DE SESSÃO ---
 if 'cesto_analises' not in st.session_state:
@@ -27,20 +41,61 @@ DB_DIR = "data/vector_db"
 NOME_RELATORIO_LOCAL = "Relatorio_Consolidado_SocIA.pdf"
 
 # --- 3. FUNÇÕES DE SUPORTE (LÓGICA E PDF) ---
+def formatar_texto_nome(nome_str):
+    """Formata nome de autor, tratando prefixos acadêmicos e casos edge case."""
+    if not nome_str or str(nome_str).strip() == "":
+        return "Desconhecido"
+    
+    nome_str = str(nome_str).strip()
+    
+    # Remover títulos acadêmicos comuns para extração do sobrenome
+    prefixos_remover = ['Dr.', 'Prof.', 'Dra.', 'Profa.', 'Mg.', 'Dr. ', 'Prof. ', 'Dra. ', 'Profa. ']
+    nome_limpo = nome_str
+    for prefixo in prefixos_remover:
+        nome_limpo = nome_limpo.replace(prefixo, '').strip()
+    
+    # Se ficou vazio após remover prefixo, usa original
+    if not nome_limpo:
+        nome_limpo = nome_str
+    
+    # Lógica de formatação ABNT
+    if ',' in nome_limpo:
+        # Já está no formato Sobrenome, Nome
+        partes = nome_limpo.split(',', 1)
+        sobrenome = partes[0].strip().upper()
+        nome = partes[1].strip()
+        return f"{sobrenome}, {nome}"
+    else:
+        # Formato Nome Sobrenome
+        partes = nome_limpo.split(' ')
+        if len(partes) >= 2:
+            sobrenome = partes[-1].upper()
+            nome = " ".join(partes[:-1])
+            return f"{sobrenome}, {nome}"
+        else:
+            return nome_limpo.upper()
+
 def formatar_abnt(autores, titulo, ano):
     try:
         if pd.isna(autores) or autores == "":
             autor_formatado = "AUTOR DESCONHECIDO"
         else:
-            primeiro_autor = str(autores).split(';')[0].strip()
-            if ',' in primeiro_autor:
-                autor_formatado = primeiro_autor.upper()
-            else:
-                partes = primeiro_autor.split(' ')
-                sobrenome = partes[-1].upper()
-                nome = " ".join(partes[:-1])
-                autor_formatado = f"{sobrenome}, {nome}"
-    except:
+            # Tenta usar o formatador robusto primeiro
+            try:
+                autor_formatado = formatar_texto_nome(autores)
+            except:
+                # Fallback para lógica original
+                primeiro_autor = str(autores).split(';')[0].strip()
+                if ',' in primeiro_autor:
+                    autor_formatado = primeiro_autor.upper()
+                else:
+                    partes = primeiro_autor.split(' ')
+                    sobrenome = partes[-1].upper()
+                    nome = " ".join(partes[:-1])
+                    autor_formatado = f"{sobrenome}, {nome}"
+    except Exception as e:
+        # Log do erro para debugging
+        print(f"[Aviso] Erro no formatador ABNT: {e}")
         autor_formatado = "AUTOR, Nome"
     return f"{autor_formatado}. {titulo}. {ano}."
 
@@ -160,6 +215,13 @@ with aba_web:
                 st.plotly_chart(fig_dna, use_container_width=True)
 
         st.divider()
+        
+        # Validação de schema robusta
+        if not any(col_enc.values()):
+            st.error("⚠️ Não foi possível identificar as colunas esperadas no CSV.")
+            st.info("Verifique se o arquivo 'data/producoes_mineradas.csv' contém as colunas esperadas (título, autores, ano, idioma, resumo).")
+            st.stop()
+        
         col_tit = col_enc['titulo'] if col_enc['titulo'] else df.columns[0]
         busca = st.text_input(f"🔍 Filtrar obras por título:")
         df_filtrado = df[df[col_tit].str.contains(busca, case=False, na=False)] if busca else df
@@ -213,7 +275,23 @@ with aba_web:
 with aba_local:
     st.subheader("📚 Biblioteca Local (PDFs)")
 
-    # --- LISTAGEM PRÉVIA DE ARQUIVOS (NOVIDADE) ---
+ # --- QUADRO TEÓRICO DE APOIO (Legenda Metodológica) ---
+    with st.expander("📚 Matriz Epistemológica: Entenda os Critérios da Auditoria"):
+        st.markdown("""
+        ### Matriz de Análise: Inovação por Mimetismo vs. Inovação Situada
+        Esta matriz orienta a Inteligência Analítica do Soc(IA) na classificação dos 400 trabalhos minerados.
+        
+        | Dimensão Analítica | Inovação por Mimetismo (Dependente) | Inovação Situada (Emancipatória) |
+        | :--- | :--- | :--- |
+        | **Referencial Geopolítico** | Norte Global (Vale do Silício, Modelos Europeus). | Território Local (Jacobina, Bahia, Contexto Regional). |
+        | **Linguagem Predominante** | Eficiência, competitividade, transferência de tecnologia. | Soberania, tecnologias sociais, emancipação, bem comum. |
+        | **Papel do IFBA** | Executor de agendas externas e metas mercadológicas. | Protagonista na solução de demandas sociais locais. |
+        | **Vetor de Desenvolvimento** | Top-down (Modelos tecnológicos importados). | Bottom-up (Arranjos produtivos e culturais locais). |
+        | **Relação de Poder** | Reprodução de hierarquias de dependência técnica. | Ruptura decolonial e busca por autonomia científica. |
+        
+        *Quadro elaborado para fundamentação do capítulo metodológico da tese.*
+        """)  
+ # --- LISTAGEM PRÉVIA DE ARQUIVOS (NOVIDADE) ---
     if os.path.exists(PASTA_PDFS):
         arquivos_pdf = [f for f in os.listdir(PASTA_PDFS) if f.endswith(".pdf")]
         if arquivos_pdf:
@@ -250,9 +328,10 @@ with aba_local:
                 docs = v_db.similarity_search(pergunta_local, k=3)
                 ctx = "\n\n".join([d.page_content for d in docs])
                 
+                # Carrega prompt estruturado de arquivos externos
+                prompt_base = carregar_prompt("decolonial_pt.txt")
                 prompt_decolonial = f"""
-                Você é um Sociólogo da Inovação especializado em Estudos Decoloniais. 
-                Audite os trechos abaixo buscando relações de poder e dependência.
+                {prompt_base}
 
                 CONTEXTO: {ctx}
                 DIRETRIZES: 

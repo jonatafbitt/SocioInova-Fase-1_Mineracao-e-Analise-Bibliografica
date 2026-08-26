@@ -2,7 +2,10 @@ import requests
 import pandas as pd
 import os
 import time
+import asyncio
+import aiohttp
 from collections import Counter
+from tqdm import tqdm
 
 # ======================================================
 # CONFIGURAÇÃO DE TERMOS MULTILINGUES (VERSÃO LIMPA)
@@ -29,7 +32,7 @@ complementos = [
     '"Social Innovation"', '"Decolonial"', '"Post-colonial"', '"Brazil"',
     
     # Português
-    '"Inovação Social"', '"Brasil"',
+    '"Inovação Social"', '"Brasil"', '"Decolonial"', '"Tecnologia Social"',
     
     # Francês
     '"L\'innovation sociale"', '"Décoloniale"', '"Brésil"',
@@ -157,9 +160,79 @@ def executar_mineracao():
         print("⚠️ Nenhum dado coletado.")
         return None
 
+async def executar_mineracao_assincrona():
+    """Versão assíncrona da mineração OpenAlex usando aiohttp com barra de progresso."""
+    url = "https://api.openalex.org/works"
+    query_cerne = '("Sociology of Innovation" OR "Innovation Policy" OR "Public Governance" OR "Federal Institute") AND ("Sociology of Innovation" OR "Innovation" OR "Public Governance" OR "Federal Institute" OR "Brazil" OR "IFBA")'
+    query_complementos = '("Social Innovation" OR "Decolonial" OR "Post-colonial" OR "Brazil")'
+    QUERY_FINAL = f"{query_cerne} AND {query_complementos}"
+    
+    RESULTADOS_POR_PAGINA = 200
+    TOTAL_PAGINAS = 2
+    
+    print(f"🛰️ Iniciando mineração assíncrona (Alvo: {RESULTADOS_POR_PAGINA * TOTAL_PAGINAS} artigos)...")
+    
+    todas_obras = []
+    
+    async with aiohttp.ClientSession() as session:
+        # Barra de progresso
+        progress_bar = tqdm(total=TOTAL_PAGINAS, desc="Mineração OpenAlex", unit="página")
+        
+        for pagina in range(1, TOTAL_PAGINAS + 1):
+            params = {
+                'search': QUERY_FINAL,
+                'per_page': RESULTADOS_POR_PAGINA,
+                'page': pagina,
+                'sort': 'cited_by_count:desc'
+            }
+            
+            async with session.get(url, params=params, timeout=30) as response:
+                if response.status == 200:
+                    dados = await response.json()
+                    results = dados.get('results', [])
+                    
+                    for obra in results:
+                        resumo = reconstruir_abstract(obra.get('abstract_inverted_index'))
+                        autores_lista = [a.get('author', {}).get('display_name') for a in obra.get('authorships', [])]
+                        autores_str = ", ".join([a for a in autores_lista if a])
+                        
+                        todas_obras.append({
+                            'id': obra.get('id'),
+                            'titulo': obra.get('display_name'),
+                            'ano': obra.get('publication_year'),
+                            'autores': autores_str,
+                            'citacoes': obra.get('cited_by_count'),
+                            'doi': obra.get('doi'),
+                            'resumo': resumo,
+                            'idioma': obra.get('language')
+                        })
+                    
+                    progress_bar.update(1)
+                    # Pequena pausa respeitosa para não sobrecarregar a API
+                    await asyncio.sleep(0.5)
+                else:
+                    print(f"⚠️ API retornou status {response.status} na página {pagina}")
+                    progress_bar.close()
+                    return None
+    
+    progress_bar.close()
+    
+    if todas_obras:
+        df = pd.DataFrame(todas_obras)
+        # Remove duplicatas caso o OpenAlex repita algum ID entre páginas
+        df = df.drop_duplicates(subset='id')
+        
+        caminho_csv = os.path.join('data', 'producoes_mineradas.csv')
+        df.to_csv(caminho_csv, index=False, encoding='utf-8')
+        print(f"✅ SUCESSO: {len(df)} artigos únicos salvos em {caminho_csv}")
+        return df
+    else:
+        print("⚠️ Nenhum dado coletado.")
+        return None
+
 def executar_fluxo_completo():
     # 1. Roda a mineração dos artigos
-    executar_mineracao()
+    df_minerado = asyncio.run(executar_mineracao_assincrona())
     
     # 2. Roda a extração do DNA Científico (IFBA)
     perfil_ifba = obter_perfil_conceitual_if('I165735391')
@@ -167,6 +240,14 @@ def executar_fluxo_completo():
         df_perfil = pd.DataFrame(list(perfil_ifba.items()), columns=['Conceito', 'Frequência'])
         df_perfil.to_csv('data/perfil_institucional.csv', index=False)
         print("✅ SUCESSO: Perfil Institucional salvo para o Dashboard.")
+
+    # 3. Gera relatório de status
+    if df_minerado is not None:
+        print(f"\n=== Relatório de Mineração ===")
+        print(f"Total de artigos únicos: {len(df_minerado)}")
+        print(f"Anos cobertos: {sorted(df_minerado['ano'].tolist())}")
+        print(f"Idiomas: {df_minerado['idioma'].value_counts().to_dict()}")
+        print(f"Top 5 autores: {df_minerado['autores'].head().tolist()}")
 
 if __name__ == "__main__":
     if not os.path.exists('data'):
