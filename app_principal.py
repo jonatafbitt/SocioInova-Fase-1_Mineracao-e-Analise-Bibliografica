@@ -188,7 +188,8 @@ with aba_web:
             'titulo': ['titulo', 'title', 'display_name'],
             'autores': ['autores', 'authors', 'author_names'],
             'resumo': ['resumo', 'abstract', 'description'],
-            'idioma': ['idioma', 'language']
+            'idioma': ['idioma', 'language'],
+            'eixo_tematico': ['eixo_tematico', 'eixo', 'tematico', 'eixos']
         }
         col_enc = {k: next((c for c in v if c in df.columns), None) for k, v in colunas_possiveis.items()}
         
@@ -211,8 +212,33 @@ with aba_web:
         with g3:
             if os.path.exists("data/perfil_institucional.csv"):
                 df_perfil = pd.read_csv("data/perfil_institucional.csv")
-                fig_dna = px.bar(df_perfil, x='Frequência', y='Conceito', orientation='h', title="DNA Científico (Top 15)")
+                fig_dna = px.bar(df_perfil, x='Frequência', y='Conceito', orientation='h', title="DNA Científico (Top 30)")
                 st.plotly_chart(fig_dna, use_container_width=True)
+
+        # Distribuição por eixo temático (se a coluna existir no banco minerado)
+        if col_enc['eixo_tematico']:
+            def quebrar_eixos(v):
+                if pd.isna(v):
+                    return []
+                return [e.strip() for e in str(v).split(';') if e.strip()]
+            lista_eixos = []
+            for v in df[col_enc['eixo_tematico']]:
+                lista_eixos.extend(quebrar_eixos(v))
+            if lista_eixos:
+                df_eixos = pd.DataFrame({'Eixo': lista_eixos})['Eixo'].value_counts().reset_index()
+                df_eixos.columns = ['Eixo', 'Total']
+                rotulos_eixos = {
+                    'economia_solidaria': 'Economia Solidária',
+                    'tecnologia_social': 'Tecnologia Social',
+                    'inovacao_politicas_publicas': 'Inovação em Políticas Públicas',
+                    'governanca_inovacao': 'Governança da Inovação',
+                    'emancipacao_inovacao': 'Inovação Emancipadora',
+                    'inovacao_instituto_publico': 'Inovação em Instituições Públicas',
+                    'geral': 'Geral'
+                }
+                df_eixos['Eixo'] = df_eixos['Eixo'].map(rotulos_eixos).fillna(df_eixos['Eixo'])
+                fig_eixos = px.bar(df_eixos, x='Eixo', y='Total', title="Distribuição por Eixo Temático (Lente Sociológica)", color='Eixo')
+                st.plotly_chart(fig_eixos, use_container_width=True)
 
         st.divider()
         
@@ -225,7 +251,17 @@ with aba_web:
         col_tit = col_enc['titulo'] if col_enc['titulo'] else df.columns[0]
         busca = st.text_input(f"🔍 Filtrar obras por título:")
         df_filtrado = df[df[col_tit].str.contains(busca, case=False, na=False)] if busca else df
-        
+
+        # Filtro por eixo temático (Lente Sociológica da Inovação)
+        if col_enc['eixo_tematico']:
+            opcoes_eixo = ["Todos"] + sorted(set(
+                e for v in df[col_enc['eixo_tematico']] if pd.notna(v)
+                for e in str(v).split(';') if e.strip()
+            ))
+            eixo_sel = st.selectbox("🧭 Filtrar por Eixo Temático (Lente Sociológica):", opcoes_eixo)
+            if eixo_sel != "Todos":
+                df_filtrado = df_filtrado[df_filtrado[col_enc['eixo_tematico']].str.contains(eixo_sel, na=False)]
+
         col_visiveis = [v for k, v in col_enc.items() if v and k != 'resumo']
         st.dataframe(df_filtrado[col_visiveis], use_container_width=True)
 
@@ -242,19 +278,77 @@ with aba_web:
             st.code(ref_abnt)
             
             if col_enc['resumo'] and pd.notna(art[col_enc['resumo']]):
+                st.markdown("**🧠 Modos de Análise — Lente Sociológica da Inovação:**")
                 c1, c2 = st.columns(2)
                 with c1:
-                    if st.button("🚀 Gerar Fichamento Ágil"):
+                    if st.button("🚀 Fichamento Ágil"):
                         with st.spinner("Analisando..."):
                             resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': f"Fichamento estruturado: {art[col_enc['resumo']]}"}])
                             st.session_state.analise_persistente = resp['message']['content']
                             st.session_state.tipo_analise = "Fichamento Estruturado"
-                with c2:
                     if st.button("🔍 Analisar Tendência"):
                         with st.spinner("Avaliando..."):
                             resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': f"Analise o viés: {art[col_enc['resumo']]}"}])
                             st.session_state.analise_persistente = resp['message']['content']
                             st.session_state.tipo_analise = "Análise de Tendência"
+                with c2:
+                    if st.button("🌍 Lente Economia Solidária"):
+                        with st.spinner("Aplicando lente..."):
+                            prompt_lente = f"""Como Sociólogo(a) da Inovação, analise a obra a seguir pela lente da ECONOMIA SOLIDÁRIA.
+Foque em: cooperativismo, autogestão, trabalho associado, relação com a tecnologia social e se a obra dialoga com formas não-capitalistas de produção e inovação.
+OBRA: {art[col_enc['resumo']]}"""
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_lente}])
+                            st.session_state.analise_persistente = resp['message']['content']
+                            st.session_state.tipo_analise = "Lente Economia Solidária"
+                    if st.button("📱 Lente Tecnologia Social"):
+                        with st.spinner("Aplicando lente..."):
+                            prompt_lente = f"""Como Sociólogo(a) da Inovação, analise a obra pela lente da TECNOLOGIA SOCIAL.
+Foque em: tecnologias apropriadas, protagonismo comunitário, adequação sociotécnica, soluções para demandas locais e o contraste com a transferência de tecnologia de cima para baixo.
+OBRA: {art[col_enc['resumo']]}"""
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_lente}])
+                            st.session_state.analise_persistente = resp['message']['content']
+                            st.session_state.tipo_analise = "Lente Tecnologia Social"
+
+                c3, c4 = st.columns(2)
+                with c3:
+                    if st.button("🏛️ Lente Governança da Inovação"):
+                        with st.spinner("Aplicando lente..."):
+                            prompt_lente = f"""Como Sociólogo(a) da Inovação, analise a obra pela lente da GOVERNANÇA DA INOVAÇÃO.
+Foque em: coordenação entre atores (Estado, universidades, sociedade civil), arranjos institucionais de políticas públicas de inovação, participação social e accountability na gestão da inovação.
+OBRA: {art[col_enc['resumo']]}"""
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_lente}])
+                            st.session_state.analise_persistente = resp['message']['content']
+                            st.session_state.tipo_analise = "Lente Governança da Inovação"
+                    if st.button("💡 Lente Inovação Emancipadora"):
+                        with st.spinner("Aplicando lente..."):
+                            prompt_lente = f"""Como Sociólogo(a) da Inovação, analise a obra pela lente das PERSPECTIVAS EMANCIPADORAS DA INOVAÇÃO.
+Foque em: autonomia científica e tecnológica, decolonialidade, soberania tecnológica, ruptura com a dependência do Norte Global e protagonismo dos territórios e comunidades locais.
+OBRA: {art[col_enc['resumo']]}"""
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_lente}])
+                            st.session_state.analise_persistente = resp['message']['content']
+                            st.session_state.tipo_analise = "Lente Inovação Emancipadora"
+                with c4:
+                    if st.button("🎓 Lente Instituições Públicas"):
+                        with st.spinner("Aplicando lente..."):
+                            prompt_lente = f"""Como Sociólogo(a) da Inovação, analise a obra pela lente da INOVAÇÃO EM INSTITUIÇÕES PÚBLICAS.
+Foque em: políticas de inovação na Rede Federal de Educação Profissional, Técnica e Tecnológica, extensão tecnológica, papel dos Institutos Federais no desenvolvimento local e a interface entre ensino, pesquisa e extensão.
+OBRA: {art[col_enc['resumo']]}"""
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_lente}])
+                            st.session_state.analise_persistente = resp['message']['content']
+                            st.session_state.tipo_analise = "Lente Instituições Públicas"
+                    if st.button("🏭 Lente Inovação em Políticas Públicas"):
+                        with st.spinner("Aplicando lente..."):
+                            prompt_lente = f"""Como Sociólogo(a) da Inovação, analise a obra pela lente da INOVAÇÃO EM POLÍTICAS PÚBLICAS.
+Foque em: formulação e implementação de políticas de inovação, inovação no setor público, instrumentos de política (financiamento, marcos legais), capacidades estatais e efeitos societais das políticas de inovação.
+OBRA: {art[col_enc['resumo']]}"""
+                            resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_lente}])
+                            st.session_state.analise_persistente = resp['message']['content']
+                            st.session_state.tipo_analise = "Lente Inovação em Políticas Públicas"
+
+                if col_enc['eixo_tematico'] and pd.notna(art[col_enc['eixo_tematico']]):
+                    st.caption(f"Eixos temáticos associados: {art[col_enc['eixo_tematico']]}")
+                elif col_enc['eixo_tematico']:
+                    st.caption("Eixos temáticos associados: geral")
 
                 if st.session_state.analise_persistente:
                     st.divider()
@@ -275,19 +369,28 @@ with aba_web:
 with aba_local:
     st.subheader("📚 Biblioteca Local (PDFs)")
 
- # --- QUADRO TEÓRICO DE APOIO (Legenda Metodológica) ---
+  # --- QUADRO TEÓRICO DE APOIO (Legenda Metodológica) ---
     with st.expander("📚 Matriz Epistemológica: Entenda os Critérios da Auditoria"):
         st.markdown("""
         ### Matriz de Análise: Inovação por Mimetismo vs. Inovação Situada
-        Esta matriz orienta a Inteligência Analítica do Soc(IA) na classificação dos 400 trabalhos minerados.
+        Esta matriz orienta a Inteligência Analítica do Soc(IA) na classificação dos trabalhos minerados.
+        A análise está aberta a toda a **Rede Federal de Educação Profissional, Científica e Tecnológica**.
         
         | Dimensão Analítica | Inovação por Mimetismo (Dependente) | Inovação Situada (Emancipatória) |
         | :--- | :--- | :--- |
         | **Referencial Geopolítico** | Norte Global (Vale do Silício, Modelos Europeus). | Território Local (Jacobina, Bahia, Contexto Regional). |
         | **Linguagem Predominante** | Eficiência, competitividade, transferência de tecnologia. | Soberania, tecnologias sociais, emancipação, bem comum. |
-        | **Papel do IFBA** | Executor de agendas externas e metas mercadológicas. | Protagonista na solução de demandas sociais locais. |
+        | **Papel dos IF's** | Executores de agendas externas e metas mercadológicas. | Protagonistas na solução de demandas sociais locais. |
         | **Vetor de Desenvolvimento** | Top-down (Modelos tecnológicos importados). | Bottom-up (Arranjos produtivos e culturais locais). |
         | **Relação de Poder** | Reprodução de hierarquias de dependência técnica. | Ruptura decolonial e busca por autonomia científica. |
+        
+        ### Eixos Temáticos da Mineração (Lente Sociológica da Inovação)
+        1. **Economia Solidária** — cooperativismo, autogestão, trabalho associado.
+        2. **Tecnologia Social** — tecnologias apropriadas e protagonismo comunitário.
+        3. **Inovação em Políticas Públicas** — formulação e implementação de políticas de inovação.
+        4. **Governança da Inovação** — coordenação entre Estado, academia e sociedade civil.
+        5. **Perspectivas Emancipadoras** — decolonialidade, soberania tecnológica e autonomia.
+        6. **Inovação em Instituições Públicas** — Rede Federal de Educação e extensão tecnológica.
         
         *Quadro elaborado para fundamentação do capítulo metodológico da tese.*
         """)  
@@ -330,17 +433,7 @@ with aba_local:
                 
                 # Carrega prompt estruturado de arquivos externos
                 prompt_base = carregar_prompt("decolonial_pt.txt")
-                prompt_decolonial = f"""
-                {prompt_base}
-
-                CONTEXTO: {ctx}
-                DIRETRIZES: 
-                1. Mimetismo vs Inovação Situada. 
-                2. Protagonismo do IFBA vs Metas Externas.
-                3. Termos Mercadológicos vs Emancipatórios.
-
-                PERGUNTA: {pergunta_local}
-                """
+                prompt_decolonial = prompt_base.replace("{ctx}", ctx).replace("{pergunta}", pergunta_local)
                 
                 resp = ollama.chat(model=modelo_ia, messages=[{'role': 'user', 'content': prompt_decolonial}])
                 st.session_state.analise_local_persistente = resp['message']['content']
