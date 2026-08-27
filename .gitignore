@@ -28,3 +28,17 @@ prompts/*.txt
 
 # Temporary
 tmp/
+
+# -------------------------------
+# Segurança / Credenciais (NUNCA versionar)
+# -------------------------------
+# Chaves de API e credenciais de autenticação não devem ser enviadas ao repositório.
+client_secrets.json
+credentials.json
+settings.yaml
+settings.yaml.txt
+token.json
+config.json.py
+
+# Mantar o apikey do OpenAlex em arquivo separado (ex.: config_local.json)
+# e carregá-lo em runtime, fora do versionamento.
