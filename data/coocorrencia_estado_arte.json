@@ -3,74 +3,74 @@
     {
       "id": "economia_solidaria",
       "label": "economia_solidaria",
-      "freq": 40
+      "freq": 82
     },
     {
       "id": "emancipacao",
       "label": "emancipacao",
-      "freq": 12
+      "freq": 46
     },
     {
       "id": "governanca",
       "label": "governanca",
-      "freq": 43
+      "freq": 124
     },
     {
       "id": "inovacao",
       "label": "inovacao",
-      "freq": 118
+      "freq": 329
     },
     {
       "id": "institutos_federais",
       "label": "institutos_federais",
-      "freq": 11
+      "freq": 31
     },
     {
       "id": "patente",
       "label": "patente",
-      "freq": 13
+      "freq": 36
     },
     {
       "id": "politicas_publicas",
       "label": "politicas_publicas",
-      "freq": 51
+      "freq": 167
     },
     {
       "id": "propriedade_intelectual",
       "label": "propriedade_intelectual",
-      "freq": 9
+      "freq": 25
     },
     {
       "id": "tecnologia_social",
       "label": "tecnologia_social",
-      "freq": 5
+      "freq": 12
     },
     {
       "id": "territorio_desenvolvimento_local",
       "label": "territorio_desenvolvimento_local",
-      "freq": 47
+      "freq": 103
     },
     {
       "id": "transferencia",
       "label": "transferencia",
-      "freq": 7
+      "freq": 11
     }
   ],
   "arestas": [
     {
       "source": "economia_solidaria",
-      "target": "inovacao",
-      "weight": 17
+      "target": "emancipacao",
+      "weight": 6
     },
     {
       "source": "economia_solidaria",
-      "target": "propriedade_intelectual",
-      "weight": 1
+      "target": "territorio_desenvolvimento_local",
+      "weight": 22
     },
     {
       "source": "economia_solidaria",
       "target": "tecnologia_social",
-      "weight": 1
+      "weight": 2
     },
     {
       "source": "economia_solidaria",
@@ -79,108 +79,138 @@
     },
     {
       "source": "economia_solidaria",
-      "target": "governanca",
-      "weight": 3
-    },
-    {
-      "source": "economia_solidaria",
-      "target": "territorio_desenvolvimento_local",
-      "weight": 13
-    },
-    {
-      "source": "economia_solidaria",
-      "target": "patente",
-      "weight": 1
-    },
-    {
-      "source": "economia_solidaria",
-      "target": "politicas_publicas",
-      "weight": 2
-    },
-    {
-      "source": "economia_solidaria",
-      "target": "emancipacao",
-      "weight": 1
-    },
-    {
-      "source": "emancipacao",
-      "target": "institutos_federais",
-      "weight": 4
-    },
-    {
-      "source": "emancipacao",
-      "target": "governanca",
-      "weight": 3
-    },
-    {
-      "source": "emancipacao",
       "target": "inovacao",
-      "weight": 2
+      "weight": 35
     },
     {
-      "source": "emancipacao",
-      "target": "politicas_publicas",
+      "source": "economia_solidaria",
+      "target": "propriedade_intelectual",
       "weight": 1
     },
     {
-      "source": "emancipacao",
-      "target": "territorio_desenvolvimento_local",
-      "weight": 1
+      "source": "economia_solidaria",
+      "target": "governanca",
+      "weight": 5
     },
     {
-      "source": "governanca",
-      "target": "inovacao",
-      "weight": 23
-    },
-    {
-      "source": "governanca",
+      "source": "economia_solidaria",
       "target": "politicas_publicas",
       "weight": 9
     },
     {
-      "source": "governanca",
-      "target": "territorio_desenvolvimento_local",
-      "weight": 4
-    },
-    {
-      "source": "governanca",
+      "source": "economia_solidaria",
       "target": "patente",
       "weight": 1
     },
     {
-      "source": "inovacao",
-      "target": "politicas_publicas",
-      "weight": 35
+      "source": "emancipacao",
+      "target": "inovacao",
+      "weight": 14
     },
     {
-      "source": "inovacao",
+      "source": "emancipacao",
       "target": "institutos_federais",
-      "weight": 3
+      "weight": 9
     },
     {
-      "source": "inovacao",
+      "source": "emancipacao",
       "target": "propriedade_intelectual",
       "weight": 2
     },
     {
-      "source": "inovacao",
+      "source": "emancipacao",
+      "target": "territorio_desenvolvimento_local",
+      "weight": 5
+    },
+    {
+      "source": "emancipacao",
+      "target": "governanca",
+      "weight": 5
+    },
+    {
+      "source": "emancipacao",
+      "target": "politicas_publicas",
+      "weight": 5
+    },
+    {
+      "source": "governanca",
+      "target": "politicas_publicas",
+      "weight": 29
+    },
+    {
+      "source": "governanca",
+      "target": "institutos_federais",
+      "weight": 3
+    },
+    {
+      "source": "governanca",
+      "target": "inovacao",
+      "weight": 66
+    },
+    {
+      "source": "governanca",
+      "target": "territorio_desenvolvimento_local",
+      "weight": 13
+    },
+    {
+      "source": "governanca",
+      "target": "propriedade_intelectual",
+      "weight": 1
+    },
+    {
+      "source": "governanca",
+      "target": "patente",
+      "weight": 1
+    },
+    {
+      "source": "governanca",
       "target": "tecnologia_social",
       "weight": 1
     },
     {
       "source": "inovacao",
-      "target": "transferencia",
-      "weight": 3
+      "target": "institutos_federais",
+      "weight": 8
     },
     {
       "source": "inovacao",
       "target": "patente",
-      "weight": 7
+      "weight": 24
+    },
+    {
+      "source": "inovacao",
+      "target": "propriedade_intelectual",
+      "weight": 9
+    },
+    {
+      "source": "inovacao",
+      "target": "politicas_publicas",
+      "weight": 108
+    },
+    {
+      "source": "inovacao",
+      "target": "tecnologia_social",
+      "weight": 6
     },
     {
       "source": "inovacao",
       "target": "territorio_desenvolvimento_local",
-      "weight": 25
+      "weight": 54
+    },
+    {
+      "source": "inovacao",
+      "target": "transferencia",
+      "weight": 5
+    },
+    {
+      "source": "institutos_federais",
+      "target": "politicas_publicas",
+      "weight": 6
+    },
+    {
+      "source": "institutos_federais",
+      "target": "patente",
+      "weight": 1
     },
     {
       "source": "institutos_federais",
@@ -189,33 +219,38 @@
     },
     {
       "source": "institutos_federais",
+      "target": "territorio_desenvolvimento_local",
+      "weight": 2
+    },
+    {
+      "source": "institutos_federais",
       "target": "tecnologia_social",
       "weight": 1
     },
     {
-      "source": "institutos_federais",
-      "target": "territorio_desenvolvimento_local",
-      "weight": 1
+      "source": "patente",
+      "target": "propriedade_intelectual",
+      "weight": 6
     },
     {
-      "source": "institutos_federais",
+      "source": "patente",
       "target": "politicas_publicas",
       "weight": 1
     },
     {
       "source": "patente",
-      "target": "propriedade_intelectual",
-      "weight": 3
-    },
-    {
-      "source": "patente",
       "target": "transferencia",
-      "weight": 1
+      "weight": 2
     },
     {
       "source": "politicas_publicas",
       "target": "territorio_desenvolvimento_local",
-      "weight": 3
+      "weight": 7
+    },
+    {
+      "source": "politicas_publicas",
+      "target": "propriedade_intelectual",
+      "weight": 2
     },
     {
       "source": "propriedade_intelectual",
@@ -225,7 +260,7 @@
     {
       "source": "propriedade_intelectual",
       "target": "transferencia",
-      "weight": 1
+      "weight": 2
     },
     {
       "source": "tecnologia_social",

@@ -3,6 +3,12 @@ import sys
 import subprocess
 import shutil
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 def check_step(desc, condition, fix_hint):
     if condition:
         print(f"✅ {desc}")

@@ -10,6 +10,9 @@ echo.
 :: 1. Ativa o ambiente virtual
 echo [1/3] Ativando Ambiente Virtual (venv)...
 call .\venv\Scripts\activate
+
+:: Garante saida UTF-8 no console (evita UnicodeEncodeError com emojis)
+set PYTHONIOENCODING=utf-8
 if %errorlevel% neq 0 (
     echo [ERRO] Nao foi possivel ativar o venv!
     echo        Verifique se a pasta "venv" existe e tem o Python instalado.
@@ -49,7 +52,7 @@ goto menu
 :dashboard
 echo.
 echo Iniciando o Dashboard...
-call streamlit run app_principal.py
+call python -m streamlit run app_principal.py
 goto menu
 
 :mineracao
