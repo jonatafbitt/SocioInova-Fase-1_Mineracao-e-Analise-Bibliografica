@@ -29,7 +29,7 @@ def verificar_saude():
         tudo_ok &= check_step(f"Pasta '{p}' existente", os.path.exists(p), f"Crie a pasta '{p}' manualmente.")
 
     # 3. Verificar Scripts Críticos
-    scripts = ['scripts/minerador_openalex.py', 'scripts/auditoria_modelos.py', 'app_principal.py']
+    scripts = ['scripts/minerador_openalex.py', 'scripts/minerador_oai.py', 'scripts/limpeza_unificada.py', 'scripts/auditoria_modelos.py', 'app_principal.py']
     for s in scripts:
         tudo_ok &= check_step(f"Arquivo '{s}' íntegro", os.path.exists(s), "Recupere o código do histórico do chat.")
 
@@ -71,6 +71,13 @@ def verificar_saude():
     # 5. Verificar Bases de Dados
     csv_path = 'data/producoes_mineradas.csv'
     tudo_ok &= check_step("Base de Dados (CSV) Gerada", os.path.exists(csv_path), "Rode o minerador OpenAlex para começar.")
+
+    # 6. Verificar Bibliotecas de Mineração (OAI-PMH)
+    try:
+        import sickle
+        tudo_ok &= check_step("Biblioteca 'sickle' (OAI-PMH) instalada", True, "pip install sickle")
+    except ImportError:
+        tudo_ok &= check_step("Biblioteca 'sickle' (OAI-PMH) instalada", False, "pip install sickle")
 
     print("="*50)
     if tudo_ok:

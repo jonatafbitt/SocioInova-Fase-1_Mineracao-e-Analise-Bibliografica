@@ -1,6 +1,6 @@
-🔬 Soc(IA)-Mineração: Uma Lente Sociológica sobre a Inovação Pública
+🔬 SocioInova Fase 1: Mineração e Análise Bibliográfica
 
-Este repositório contém o código-fonte do Soc(IA)-Mineração, uma ferramenta de pesquisa desenvolvida como parte da tese de doutorado: "UMA LENTE SOCIOLÓGICA SOBRE A GOVERNANÇA DA INOVAÇÃO NOS INSTITUTOS FEDERAIS: INTERFACES ANALÍTICAS PARA UMA COMPREENSÃO DO “SOCIAL” NA INOVAÇÃO PÚBLICA".
+Este repositório contém o código-fonte do SocioInova (Fase 1: Mineração e Análise Bibliográfica), uma ferramenta de pesquisa desenvolvida como parte da tese de doutorado: "UMA LENTE SOCIOLÓGICA SOBRE A GOVERNANÇA DA INOVAÇÃO NOS INSTITUTOS FEDERAIS: INTERFACES ANALÍTICAS PARA UMA COMPREENSÃO DO “SOCIAL” NA INOVAÇÃO PÚBLICA".
 A ferramenta utiliza Processamento de Linguagem Natural (PLN) e arquitetura RAG (Retrieval-Augmented Generation) para realizar auditorias sociológicas e decoloniais em produções científicas e documentos institucionais.
 
 🚀 Funcionalidades Principais
@@ -49,7 +49,7 @@ Plaintext
 │   ├── producoes_mineradas.csv
 │   └── vector_db/            # Banco de dados vetorial do ChromaDB
 ├── meus_pdfs/                # Pasta local para os documentos da tese
-└── Relatorio_Consolidado_SocIA.pdf  # Arquivo gerado para sincronização
+└── Relatorio_Consolidado_SocioInova.pdf  # Arquivo gerado para sincronização
 
 
 🧪 Metodologia e IA Responsável

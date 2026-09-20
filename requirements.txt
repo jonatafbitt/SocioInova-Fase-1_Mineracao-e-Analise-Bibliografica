@@ -5,6 +5,9 @@ plotly
 # --- Mineração de Dados e Requisições ---
 requests
 pandas
+aiohttp
+tqdm
+sickle           # OAI-PMH (Oasisbr / DSpace / SciELO)
 
 # --- Inteligência Artificial e RAG (LangChain + Ollama) ---
 ollama

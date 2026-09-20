@@ -10,7 +10,7 @@ dict_drive.json
 # Impede que os PDFs institucionais do IFBA e os bancos de dados saiam da sua máquina
 meus_pdfs/
 data/vector_db/
-Relatorio_Consolidado_SocIA.pdf
+Relatorio_Consolidado_SocioInova.pdf
 *.pdf
 *.csv
 

@@ -1,4 +1,4 @@
-# Guia de Revogação de Credenciais — Soc(IA)-Mineração
+# Guia de Revogação de Credenciais — SocioInova (Fase 1: Mineração e Análise Bibliográfica)
 
 > **IMPORTANTE:** Antes de qualquer ação, verifique as credenciais locais que o app
 > precisa para continuar funcionando (elas NÃO estão mais versionadas no

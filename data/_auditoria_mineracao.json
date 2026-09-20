@@ -1,0 +1,1134 @@
+[
+  {
+    "tipo": "openalex",
+    "timestamp": "2026-09-02T13:09:23",
+    "total_final": 224,
+    "idiomas": {
+      "fr": 81,
+      "en": 66,
+      "es": 50,
+      "pt": 27
+    },
+    "amostra_eixos": {
+      "geral": 140,
+      "economia_solidaria": 42,
+      "inovacao_politicas_publicas": 33,
+      "inovacao_instituto_publico": 3,
+      "inovacao_politicas_publicas;inovacao_instituto_publico": 2,
+      "governanca_inovacao": 1,
+      "tecnologia_social": 1,
+      "emancipacao_inovacao": 1
+    }
+  },
+  {
+    "tipo": "oai",
+    "fonte": "Lume_UFRGS",
+    "endpoint": "https://lume.ufrgs.br/oai/request",
+    "status": "ok",
+    "detalhe": "8 registros relevantes",
+    "timestamp": "2026-09-02T13:09:44"
+  },
+  {
+    "tipo": "oai_merge",
+    "timestamp": "2026-09-02T13:09:44",
+    "total_final": 8,
+    "por_fonte": {
+      "Lume_UFRGS": 8
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T13:09:44",
+    "total_final": 8,
+    "por_fonte": {
+      "Lume_UFRGS": 8
+    },
+    "por_ano": {
+      "2010": 8
+    },
+    "por_idioma": {
+      "por": 8
+    }
+  },
+  {
+    "tipo": "openalex",
+    "timestamp": "2026-09-02T13:10:22",
+    "total_final": 224,
+    "idiomas": {
+      "fr": 81,
+      "en": 66,
+      "es": 50,
+      "pt": 27
+    },
+    "amostra_eixos": {
+      "geral": 140,
+      "economia_solidaria": 42,
+      "inovacao_politicas_publicas": 33,
+      "inovacao_instituto_publico": 3,
+      "inovacao_politicas_publicas;inovacao_instituto_publico": 2,
+      "governanca_inovacao": 1,
+      "tecnologia_social": 1,
+      "emancipacao_inovacao": 1
+    }
+  },
+  {
+    "tipo": "oai",
+    "fonte": "Lume_UFRGS",
+    "endpoint": "https://lume.ufrgs.br/oai/request",
+    "status": "ok",
+    "detalhe": "8 registros relevantes",
+    "timestamp": "2026-09-02T13:10:41"
+  },
+  {
+    "tipo": "oai_merge",
+    "timestamp": "2026-09-02T13:10:41",
+    "total_final": 8,
+    "por_fonte": {
+      "Lume_UFRGS": 8
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T13:10:41",
+    "total_final": 231,
+    "por_fonte": {
+      "OpenAlex": 223,
+      "Lume_UFRGS": 8
+    },
+    "por_ano": {
+      "2010": 21,
+      "2011": 16,
+      "2012": 18,
+      "2013": 18,
+      "2014": 7,
+      "2015": 20,
+      "2016": 17,
+      "2017": 23,
+      "2018": 21,
+      "2019": 14,
+      "2020": 21,
+      "2021": 20,
+      "2022": 11,
+      "2023": 3,
+      "2024": 1
+    },
+    "por_idioma": {
+      "fr": 80,
+      "en": 66,
+      "es": 50,
+      "pt": 27,
+      "por": 8
+    }
+  },
+  {
+    "tipo": "oai",
+    "fonte": "Lume_UFRGS",
+    "endpoint": "https://lume.ufrgs.br/oai/request",
+    "status": "ok",
+    "detalhe": "3 registros relevantes",
+    "timestamp": "2026-09-02T14:01:09"
+  },
+  {
+    "tipo": "oai_merge",
+    "timestamp": "2026-09-02T14:01:09",
+    "total_final": 3,
+    "por_fonte": {
+      "Lume_UFRGS": 3
+    }
+  },
+  {
+    "tipo": "oai",
+    "fonte": "Lume_UFRGS",
+    "endpoint": "https://lume.ufrgs.br/oai/request",
+    "status": "erro",
+    "detalhe": "ConnectTimeout: HTTPSConnectionPool(host='lume.ufrgs.br', port=443): Max retries exceeded with url: /oai/request?resumptionToken=oai_dc%2F%2F%2Fcom_10183_9%2F2000&verb=ListRecords (Caused by ConnectTimeoutError(<HTTPSConnection(host='lume.ufrgs.br', port=443) at 0x28fd4166490>, 'Connection to lume.ufrgs.br timed out. (connect timeout=40)'))",
+    "timestamp": "2026-09-02T14:02:12"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "Lume_UFRGS",
+    "endpoint": "https://lume.ufrgs.br/oai/request",
+    "status": "ok",
+    "detalhe": "40 registros relevantes",
+    "timestamp": "2026-09-02T14:05:08"
+  },
+  {
+    "tipo": "oai_merge",
+    "timestamp": "2026-09-02T14:05:08",
+    "total_final": 40,
+    "por_fonte": {
+      "Lume_UFRGS": 40
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T14:05:37",
+    "total_final": 263,
+    "por_fonte": {
+      "OpenAlex": 223,
+      "Lume_UFRGS": 40
+    },
+    "por_ano": {
+      "2010": 33,
+      "2011": 36,
+      "2012": 18,
+      "2013": 18,
+      "2014": 7,
+      "2015": 20,
+      "2016": 17,
+      "2017": 23,
+      "2018": 21,
+      "2019": 14,
+      "2020": 21,
+      "2021": 20,
+      "2022": 11,
+      "2023": 3,
+      "2024": 1
+    },
+    "por_idioma": {
+      "fr": 80,
+      "en": 66,
+      "es": 50,
+      "por": 40,
+      "pt": 27
+    }
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFBA",
+    "endpoint": "https://repositorio.ifba.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "4 registros relevantes",
+    "timestamp": "2026-09-02T14:19:42"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFGoiano",
+    "endpoint": "https://repositorio.ifgoiano.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "0 registros relevantes",
+    "timestamp": "2026-09-02T14:19:43"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFMG",
+    "endpoint": "https://repositorio.ifmg.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:19:45"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFES",
+    "endpoint": "https://repositorio.ifes.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "0 registros relevantes",
+    "timestamp": "2026-09-02T14:19:45"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFTO",
+    "endpoint": "https://repositorio.ifto.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "NoRecordsMatch: No matches for the query",
+    "timestamp": "2026-09-02T14:19:47"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFRS",
+    "endpoint": "https://repositorio.ifrs.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:19:50"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFAL",
+    "endpoint": "https://repositorio.ifal.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "NoRecordsMatch: No matches for the query",
+    "timestamp": "2026-09-02T14:19:50"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFAM",
+    "endpoint": "https://repositorio.ifam.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:19:54"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFAC",
+    "endpoint": "https://repositorio.ifac.edu.br/oai/request",
+    "status": "erro",
+    "detalhe": "NoRecordsMatch: No matches for the query",
+    "timestamp": "2026-09-02T14:19:54"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFRO",
+    "endpoint": "https://repositorio.ifro.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "HTTPError: 500 Server Error:  for url: https://repositorio.ifro.edu.br/server/oai/request?metadataPrefix=oai_dc&verb=ListRecords",
+    "timestamp": "2026-09-02T14:19:55"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFPB",
+    "endpoint": "https://repositorio.ifpb.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:20:04"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFSP",
+    "endpoint": "https://repositorio.ifsp.edu.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "3 relevantes (interrompido: TypeError: sequence item 0: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T14:20:04"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFSC",
+    "endpoint": "https://repositorio.ifsc.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:20:06"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFMS",
+    "endpoint": "https://repositorio.ifms.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:20:07"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFB",
+    "endpoint": "https://repositorio.ifb.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:20:09"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFCE",
+    "endpoint": "https://repositorio.ifce.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "TypeError: sequence item 1: expected str instance, NoneType found",
+    "timestamp": "2026-09-02T14:20:10"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFPE",
+    "endpoint": "https://repositorio.ifpe.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:20:32"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFRR",
+    "endpoint": "https://repositorio.ifrr.edu.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "7 relevantes (interrompido: HTTPError: 500 Server Error:  for url: https://repositorio.ifrr.edu.br/server/oai/request?resumptionToken=oai_dc%2F%2F%2F%2F100&verb=ListRecords)",
+    "timestamp": "2026-09-02T14:20:34"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "CEFETMG",
+    "endpoint": "https://repositorio.cefetmg.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:20:37"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "Lume_UFRGS",
+    "endpoint": "https://lume.ufrgs.br/oai/request",
+    "status": "ok",
+    "detalhe": "60 registros relevantes",
+    "timestamp": "2026-09-02T14:21:03"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFSM",
+    "endpoint": "https://repositorio.ufsm.br/oai/request",
+    "status": "erro",
+    "detalhe": "HTTPError: 403 Client Error: Forbidden for url: https://repositorio.ufsm.br/oai/request?metadataPrefix=oai_dc&set=com_1_9&verb=ListRecords",
+    "timestamp": "2026-09-02T14:21:03"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFU",
+    "endpoint": "https://repositorio.ufu.br/oai/request",
+    "status": "ok",
+    "detalhe": "0 registros relevantes",
+    "timestamp": "2026-09-02T14:21:04"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFSCar",
+    "endpoint": "https://repositorio.ufscar.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "8 relevantes (interrompido: TypeError: sequence item 1: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T14:21:06"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFOP",
+    "endpoint": "https://repositorio.ufop.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:21:09"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFCA",
+    "endpoint": "https://repositorio.ufca.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "12 registros relevantes",
+    "timestamp": "2026-09-02T14:21:10"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UNIFESP",
+    "endpoint": "https://repositorio.unifesp.br/oai/request",
+    "status": "erro",
+    "detalhe": "TypeError: sequence item 4: expected str instance, NoneType found",
+    "timestamp": "2026-09-02T14:21:11"
+  },
+  {
+    "tipo": "oai_merge",
+    "timestamp": "2026-09-02T14:21:12",
+    "total_final": 214,
+    "por_fonte": {
+      "Lume_UFRGS": 60,
+      "IFMG": 12,
+      "IFRS": 12,
+      "IFAM": 12,
+      "IFPB": 12,
+      "IFSC": 12,
+      "IFMS": 12,
+      "IFB": 12,
+      "IFPE": 12,
+      "CEFETMG": 12,
+      "UFOP": 12,
+      "UFCA": 12,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T18:22:35",
+    "total_final": 436,
+    "por_fonte": {
+      "OpenAlex": 223,
+      "Lume_UFRGS": 60,
+      "CEFETMG": 12,
+      "IFAM": 12,
+      "IFB": 12,
+      "IFPE": 12,
+      "IFSC": 12,
+      "IFMG": 12,
+      "IFMS": 12,
+      "UFOP": 12,
+      "UFCA": 12,
+      "IFRS": 12,
+      "IFPB": 11,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    },
+    "por_ano": {
+      "2010": 33,
+      "2011": 50,
+      "2012": 24,
+      "2013": 19,
+      "2014": 7,
+      "2015": 20,
+      "2016": 20,
+      "2017": 24,
+      "2018": 28,
+      "2019": 24,
+      "2020": 25,
+      "2021": 28,
+      "2022": 23,
+      "2023": 7,
+      "2024": 13,
+      "2025": 48,
+      "2026": 43
+    },
+    "por_idioma": {
+      "por": 109,
+      "fr": 80,
+      "en": 66,
+      "pt": 61,
+      "es": 50,
+      "pt_BR": 19,
+      "Português Brasil": 12,
+      "Portugues": 11,
+      "pt-BR": 7,
+      "Português": 6,
+      "Português (Brasil)": 2,
+      "Portugês": 1,
+      "português": 1,
+      "en_US": 1
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T18:22:39",
+    "total_final": 436,
+    "por_fonte": {
+      "OpenAlex": 223,
+      "Lume_UFRGS": 60,
+      "CEFETMG": 12,
+      "IFAM": 12,
+      "IFB": 12,
+      "IFPE": 12,
+      "IFSC": 12,
+      "IFMG": 12,
+      "IFMS": 12,
+      "UFOP": 12,
+      "UFCA": 12,
+      "IFRS": 12,
+      "IFPB": 11,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    },
+    "por_ano": {
+      "2010": 33,
+      "2011": 50,
+      "2012": 24,
+      "2013": 19,
+      "2014": 7,
+      "2015": 20,
+      "2016": 20,
+      "2017": 24,
+      "2018": 28,
+      "2019": 24,
+      "2020": 25,
+      "2021": 28,
+      "2022": 23,
+      "2023": 7,
+      "2024": 13,
+      "2025": 48,
+      "2026": 43
+    },
+    "por_idioma": {
+      "por": 109,
+      "fr": 80,
+      "en": 66,
+      "pt": 61,
+      "es": 50,
+      "pt_BR": 19,
+      "Português Brasil": 12,
+      "Portugues": 11,
+      "pt-BR": 7,
+      "Português": 6,
+      "Português (Brasil)": 2,
+      "Portugês": 1,
+      "português": 1,
+      "en_US": 1
+    }
+  },
+  {
+    "tipo": "openalex",
+    "timestamp": "2026-09-02T19:43:05",
+    "total_final": 643,
+    "idiomas": {
+      "fr": 214,
+      "en": 193,
+      "es": 149,
+      "pt": 87
+    },
+    "amostra_eixos": {
+      "geral": 404,
+      "economia_solidaria": 106,
+      "inovacao_politicas_publicas": 103,
+      "economia_solidaria;inovacao_politicas_publicas": 8,
+      "tecnologia_social": 7,
+      "emancipacao_inovacao": 4,
+      "governanca_inovacao": 3,
+      "inovacao_instituto_publico": 3
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T19:43:11",
+    "total_final": 852,
+    "por_fonte": {
+      "OpenAlex": 639,
+      "Lume_UFRGS": 60,
+      "CEFETMG": 12,
+      "IFAM": 12,
+      "IFB": 12,
+      "IFPE": 12,
+      "IFSC": 12,
+      "IFMG": 12,
+      "IFMS": 12,
+      "UFOP": 12,
+      "UFCA": 12,
+      "IFRS": 12,
+      "IFPB": 11,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    },
+    "por_ano": {
+      "2010.0": 50,
+      "2011.0": 66,
+      "2012.0": 51,
+      "2013.0": 44,
+      "2014.0": 20,
+      "2015.0": 39,
+      "2016.0": 47,
+      "2017.0": 52,
+      "2018.0": 65,
+      "2019.0": 70,
+      "2020.0": 76,
+      "2021.0": 62,
+      "2022.0": 50,
+      "2023.0": 25,
+      "2024.0": 24,
+      "2025.0": 61,
+      "2026.0": 50
+    },
+    "por_idioma": {
+      "fr": 212,
+      "en": 191,
+      "es": 149,
+      "pt": 121,
+      "por": 109,
+      "pt_BR": 19,
+      "Português Brasil": 12,
+      "Portugues": 11,
+      "pt-BR": 7,
+      "Português": 6,
+      "Português (Brasil)": 2,
+      "Portugês": 1,
+      "português": 1,
+      "en_US": 1
+    }
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFBA",
+    "endpoint": "https://repositorio.ifba.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "4 registros relevantes",
+    "timestamp": "2026-09-02T19:45:36"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFGoiano",
+    "endpoint": "https://repositorio.ifgoiano.edu.br/oai/request",
+    "status": "erro",
+    "detalhe": "NoRecordsMatch: No matches for the query",
+    "timestamp": "2026-09-02T19:45:37"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFMG",
+    "endpoint": "https://repositorio.ifmg.edu.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "12 relevantes (interrompido: TypeError: sequence item 3: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T19:45:39"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFES",
+    "endpoint": "https://repositorio.ifes.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "0 registros relevantes",
+    "timestamp": "2026-09-02T19:45:39"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFTO",
+    "endpoint": "https://repositorio.ifto.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "NoRecordsMatch: No matches for the query",
+    "timestamp": "2026-09-02T19:45:40"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFRS",
+    "endpoint": "https://repositorio.ifrs.edu.br/oai/request",
+    "status": "parcial",
+    "detalhe": "15 relevantes (interrompido: TypeError: sequence item 0: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T19:45:42"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFAL",
+    "endpoint": "https://repositorio.ifal.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "NoRecordsMatch: No matches for the query",
+    "timestamp": "2026-09-02T19:45:43"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFAM",
+    "endpoint": "https://repositorio.ifam.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "71 registros relevantes",
+    "timestamp": "2026-09-02T19:46:18"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFAC",
+    "endpoint": "https://repositorio.ifac.edu.br/oai/request",
+    "status": "erro",
+    "detalhe": "NoRecordsMatch: No matches for the query",
+    "timestamp": "2026-09-02T19:46:19"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFRO",
+    "endpoint": "https://repositorio.ifro.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "HTTPError: 500 Server Error:  for url: https://repositorio.ifro.edu.br/server/oai/request?metadataPrefix=oai_dc&verb=ListRecords",
+    "timestamp": "2026-09-02T19:46:20"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFPB",
+    "endpoint": "https://repositorio.ifpb.edu.br/oai/request",
+    "status": "ok",
+    "detalhe": "30 registros relevantes (Limite bruto atingido (4000) antes de coletar 300 relevantes)",
+    "timestamp": "2026-09-02T19:46:54"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFSP",
+    "endpoint": "https://repositorio.ifsp.edu.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "3 relevantes (interrompido: TypeError: sequence item 0: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T19:46:55"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFSC",
+    "endpoint": "https://repositorio.ifsc.edu.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "54 relevantes (interrompido: TypeError: sequence item 1: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T19:47:08"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFMS",
+    "endpoint": "https://repositorio.ifms.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "23 registros relevantes",
+    "timestamp": "2026-09-02T19:47:10"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFB",
+    "endpoint": "https://repositorio.ifb.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "80 registros relevantes",
+    "timestamp": "2026-09-02T19:47:31"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFCE",
+    "endpoint": "https://repositorio.ifce.edu.br/server/oai/request",
+    "status": "erro",
+    "detalhe": "TypeError: sequence item 1: expected str instance, NoneType found",
+    "timestamp": "2026-09-02T19:47:31"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFPE",
+    "endpoint": "https://repositorio.ifpe.edu.br/oai/request",
+    "status": "parcial",
+    "detalhe": "36 relevantes (interrompido: TypeError: sequence item 3: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T19:47:53"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "IFRR",
+    "endpoint": "https://repositorio.ifrr.edu.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "7 relevantes (interrompido: HTTPError: 500 Server Error:  for url: https://repositorio.ifrr.edu.br/server/oai/request?resumptionToken=oai_dc%2F%2F%2F%2F100&verb=ListRecords)",
+    "timestamp": "2026-09-02T19:47:54"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "CEFETMG",
+    "endpoint": "https://repositorio.cefetmg.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "55 relevantes (interrompido: TypeError: sequence item 0: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T19:48:08"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "Lume_UFRGS",
+    "endpoint": "https://lume.ufrgs.br/oai/request",
+    "status": "ok",
+    "detalhe": "60 registros relevantes",
+    "timestamp": "2026-09-02T19:48:34"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFSM",
+    "endpoint": "https://repositorio.ufsm.br/oai/request",
+    "status": "erro",
+    "detalhe": "HTTPError: 403 Client Error: Forbidden for url: https://repositorio.ufsm.br/oai/request?metadataPrefix=oai_dc&set=com_1_9&verb=ListRecords",
+    "timestamp": "2026-09-02T19:48:35"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFU",
+    "endpoint": "https://repositorio.ufu.br/oai/request",
+    "status": "ok",
+    "detalhe": "0 registros relevantes",
+    "timestamp": "2026-09-02T19:48:35"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFSCar",
+    "endpoint": "https://repositorio.ufscar.br/server/oai/request",
+    "status": "parcial",
+    "detalhe": "8 relevantes (interrompido: TypeError: sequence item 1: expected str instance, NoneType found)",
+    "timestamp": "2026-09-02T19:48:37"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFOP",
+    "endpoint": "https://repositorio.ufop.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "59 registros relevantes (Limite bruto atingido (4000) antes de coletar 300 relevantes)",
+    "timestamp": "2026-09-02T19:49:40"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UFCA",
+    "endpoint": "https://repositorio.ufca.edu.br/server/oai/request",
+    "status": "ok",
+    "detalhe": "34 registros relevantes",
+    "timestamp": "2026-09-02T19:49:42"
+  },
+  {
+    "tipo": "oai",
+    "fonte": "UNIFESP",
+    "endpoint": "https://repositorio.unifesp.br/oai/request",
+    "status": "erro",
+    "detalhe": "TypeError: sequence item 4: expected str instance, NoneType found",
+    "timestamp": "2026-09-02T19:49:44"
+  },
+  {
+    "tipo": "oai_merge",
+    "timestamp": "2026-09-02T19:49:44",
+    "total_final": 551,
+    "por_fonte": {
+      "IFB": 80,
+      "IFAM": 71,
+      "Lume_UFRGS": 60,
+      "UFOP": 59,
+      "CEFETMG": 55,
+      "IFSC": 54,
+      "IFPE": 36,
+      "UFCA": 34,
+      "IFPB": 30,
+      "IFMS": 23,
+      "IFRS": 15,
+      "IFMG": 12,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T19:49:45",
+    "total_final": 1173,
+    "por_fonte": {
+      "OpenAlex": 639,
+      "IFAM": 71,
+      "IFB": 65,
+      "Lume_UFRGS": 60,
+      "UFOP": 59,
+      "CEFETMG": 55,
+      "IFSC": 54,
+      "IFPE": 36,
+      "UFCA": 34,
+      "IFPB": 28,
+      "IFMS": 23,
+      "IFRS": 15,
+      "IFMG": 12,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    },
+    "por_ano": {
+      "2010.0": 50,
+      "2011.0": 66,
+      "2012.0": 51,
+      "2013.0": 49,
+      "2014.0": 22,
+      "2015.0": 42,
+      "2016.0": 49,
+      "2017.0": 53,
+      "2018.0": 70,
+      "2019.0": 74,
+      "2020.0": 90,
+      "2021.0": 70,
+      "2022.0": 62,
+      "2023.0": 61,
+      "2024.0": 46,
+      "2025.0": 158,
+      "2026.0": 160
+    },
+    "por_idioma": {
+      "fr": 212,
+      "pt": 204,
+      "por": 198,
+      "en": 193,
+      "es": 149,
+      "pt_BR": 77,
+      "Português Brasil": 54,
+      "Português (Brasil)": 25,
+      "Portugues": 20,
+      "pt-BR": 7,
+      "Português": 6,
+      "en_US": 5,
+      "português": 2,
+      "Portugês": 1
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-02T19:52:05",
+    "total_final": 1173,
+    "por_fonte": {
+      "OpenAlex": 639,
+      "IFAM": 71,
+      "IFB": 65,
+      "Lume_UFRGS": 60,
+      "UFOP": 59,
+      "CEFETMG": 55,
+      "IFSC": 54,
+      "IFPE": 36,
+      "UFCA": 34,
+      "IFPB": 28,
+      "IFMS": 23,
+      "IFRS": 15,
+      "IFMG": 12,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    },
+    "por_ano": {
+      "2010.0": 50,
+      "2011.0": 66,
+      "2012.0": 51,
+      "2013.0": 49,
+      "2014.0": 22,
+      "2015.0": 42,
+      "2016.0": 49,
+      "2017.0": 53,
+      "2018.0": 70,
+      "2019.0": 74,
+      "2020.0": 90,
+      "2021.0": 70,
+      "2022.0": 62,
+      "2023.0": 61,
+      "2024.0": 46,
+      "2025.0": 158,
+      "2026.0": 160
+    },
+    "por_idioma": {
+      "fr": 212,
+      "pt": 204,
+      "por": 198,
+      "en": 193,
+      "es": 149,
+      "pt_BR": 77,
+      "Português Brasil": 54,
+      "Português (Brasil)": 25,
+      "Portugues": 20,
+      "pt-BR": 7,
+      "Português": 6,
+      "en_US": 5,
+      "português": 2,
+      "Portugês": 1
+    }
+  },
+  {
+    "tipo": "openalex",
+    "timestamp": "2026-09-05T11:31:09",
+    "total_final": 644,
+    "idiomas": {
+      "fr": 215,
+      "en": 193,
+      "es": 149,
+      "pt": 87
+    },
+    "amostra_eixos": {
+      "geral": 404,
+      "economia_solidaria": 106,
+      "inovacao_politicas_publicas": 104,
+      "economia_solidaria;inovacao_politicas_publicas": 8,
+      "tecnologia_social": 7,
+      "emancipacao_inovacao": 4,
+      "governanca_inovacao": 3,
+      "inovacao_instituto_publico": 3
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-05T11:31:15",
+    "total_final": 1174,
+    "por_fonte": {
+      "OpenAlex": 640,
+      "IFAM": 71,
+      "IFB": 65,
+      "Lume_UFRGS": 60,
+      "UFOP": 59,
+      "CEFETMG": 55,
+      "IFSC": 54,
+      "IFPE": 36,
+      "UFCA": 34,
+      "IFPB": 28,
+      "IFMS": 23,
+      "IFRS": 15,
+      "IFMG": 12,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    },
+    "por_ano": {
+      "2010.0": 50,
+      "2011.0": 66,
+      "2012.0": 51,
+      "2013.0": 50,
+      "2014.0": 22,
+      "2015.0": 42,
+      "2016.0": 49,
+      "2017.0": 52,
+      "2018.0": 69,
+      "2019.0": 75,
+      "2020.0": 89,
+      "2021.0": 71,
+      "2022.0": 62,
+      "2023.0": 61,
+      "2024.0": 46,
+      "2025.0": 158,
+      "2026.0": 161
+    },
+    "por_idioma": {
+      "fr": 213,
+      "pt": 204,
+      "por": 198,
+      "en": 193,
+      "es": 149,
+      "pt_BR": 77,
+      "Português Brasil": 54,
+      "Português (Brasil)": 25,
+      "Portugues": 20,
+      "pt-BR": 7,
+      "Português": 6,
+      "en_US": 5,
+      "português": 2,
+      "Portugês": 1
+    }
+  },
+  {
+    "tipo": "openalex",
+    "timestamp": "2026-09-09T16:47:33",
+    "total_final": 641,
+    "idiomas": {
+      "fr": 216,
+      "en": 194,
+      "es": 144,
+      "pt": 87
+    },
+    "amostra_eixos": {
+      "geral": 406,
+      "inovacao_politicas_publicas": 104,
+      "economia_solidaria": 104,
+      "tecnologia_social": 7,
+      "economia_solidaria;inovacao_politicas_publicas": 7,
+      "emancipacao_inovacao": 4,
+      "inovacao_instituto_publico": 3,
+      "governanca_inovacao": 2
+    }
+  },
+  {
+    "tipo": "limpeza_unificada",
+    "timestamp": "2026-09-09T16:47:40",
+    "total_final": 1177,
+    "por_fonte": {
+      "OpenAlex": 643,
+      "IFAM": 71,
+      "IFB": 65,
+      "Lume_UFRGS": 60,
+      "UFOP": 59,
+      "CEFETMG": 55,
+      "IFSC": 54,
+      "IFPE": 36,
+      "UFCA": 34,
+      "IFPB": 28,
+      "IFMS": 23,
+      "IFRS": 15,
+      "IFMG": 12,
+      "UFSCar": 8,
+      "IFRR": 7,
+      "IFBA": 4,
+      "IFSP": 3
+    },
+    "por_ano": {
+      "2010.0": 51,
+      "2011.0": 66,
+      "2012.0": 51,
+      "2013.0": 51,
+      "2014.0": 23,
+      "2015.0": 42,
+      "2016.0": 49,
+      "2017.0": 51,
+      "2018.0": 71,
+      "2019.0": 76,
+      "2020.0": 88,
+      "2021.0": 69,
+      "2022.0": 63,
+      "2023.0": 60,
+      "2024.0": 46,
+      "2025.0": 159,
+      "2026.0": 161
+    },
+    "por_idioma": {
+      "fr": 215,
+      "pt": 205,
+      "por": 198,
+      "en": 195,
+      "es": 147,
+      "pt_BR": 77,
+      "Português Brasil": 54,
+      "Português (Brasil)": 25,
+      "Portugues": 20,
+      "pt-BR": 7,
+      "Português": 6,
+      "en_US": 5,
+      "português": 2,
+      "Portugês": 1
+    }
+  }
+]

@@ -44,3 +44,69 @@ Foi necessário gerenciar o equilíbrio entre modelos locais para garantir o sig
 
 ## 4. Conclusão Metodológica
 A superação destas barreiras demonstra a maturidade técnica da pesquisa. O Observatório de Sociologia da Inovação opera agora sob os princípios da **Soberania Tecnológica** e do **Rigor Algorítmico**, transcendendo a mera coleta de dados para atuar como um instrumento analítico crítico, essencial para uma tese de excelência.
+
+---
+
+## 5. Arquitetura Expandida de Mineração (Implementação Planejada a partir do Catálogo de Fontes)
+
+A partir do catálogo *"Fontes Auditáveis e Protocolos Programáticos para Extração em Lote (Bulk Data Mining)"* — que mapeia mais de 1.000 fontes primárias e secundárias em 10 macrocategorias — o pipeline de mineração foi **reestruturado de single-fonte (OpenAlex) para multi-fonte**, com separação rigorosa entre **coleta por fonte** e **consolidação** da base.
+
+### 5.1. Arquitetura em Três Estágios
+
+| Estágio | Script | Responsabilidade |
+| :--- | :--- | :--- |
+| **Coleta por fonte** | `scripts/minerador_openalex.py` | OpenAlex (works) com filtro estrito de relevância |
+| **Coleta por fonte** | `scripts/minerador_oai.py` | Harvester OAI-PMH (Oasisbr/DSpace/SciELO) |
+| **Consolidação** | `scripts/limpeza_unificada.py` | Merge, dedup inter-fonte, normalização e trilha de auditoria |
+
+Cada script de coleta grava em um arquivo **de fonte** (`data/producoes_openalex.csv`, `data/producoes_oai.csv`), e o estágio de consolidação produz a **base unificada** (`data/producoes_mineradas.csv`). Isso elimina o conflito anterior (a coleta gravava sobre a base consolidada) e permite reprocessar qualquer fonte sem perder as demais.
+
+### 5.2. Correção da Qualidade (Eliminação do Ruído Biomédico)
+
+A versão anterior usava `search=` amplo no OpenAlex, cujo *matching fuzzy disjuntivo* (agravado pelo termo `"Brazil"`) saturava a amostra com literatura biomédica (Global Burden of Disease, neurociência, microbiologia). Medidas adotadas no novo `minerador_openalex.py`:
+
+- **Query estruturada por janela de idioma**: `title_and_abstract.search` com `language:{en|pt|fr|es}` separadas, em vez de uma única query OR global.
+- **Filtros de tipo e ano**: `type:article|book-chapter|dissertation|thesis` e `publication_year:2010-`.
+- **Filtro pós-coleta de relevância**: só são retidas obras com **≥2 termos do dicionário de inovação** no título/resumo (inovação, governança, tecnologia social, economia solidária, patente, etc.), eliminando os falsos-positivos biomédicos.
+- **`mailto` (polite pool)** e `select` com campos mínimos, minimizando custo e sobrecarga.
+- **Rastreabilidade**: colunas `fonte`, `id_fonte`, `url`, `conceitos`, `coleta_timestamp` e `query_utilizada` em cada registro (auditabilidade/replicabilidade para a tese).
+
+### 5.3. Harvester OAI-PMH
+
+O `minerador_oai.py` implementa o protocolo **OAI-PMH** via `sickle` para extração em lote de repositórios institucionais (DSpace), alinhado às macrocategorias 1 e 2 do catálogo:
+
+- **Resiliência a anti-bot**: alguns agregadores nacionais (ex.: Oasisbr) estão atrás de *challenge* Cloudflare (JS) e não respondem ao acesso programático simples — o harvester tenta cada endpoint, registra o status e **ignora graciosamente** os bloqueados, sem interromper o pipeline.
+- **Filtro por comunidade/coleção** (`set` do DSpace), permitindo mirar áreas relevantes (ex.: Ciências Sociais Aplicadas).
+- **Filtro de relevância e ano** reutilizados do dicionário de inovação.
+- **Endpoints validados**: Lume UFRGS (funcional); o catálogo de endpoints pode ser ampliado editando `FONTES_OAI`.
+
+### 5.4. Consolidação e Trilha de Auditoria
+
+O `limpeza_unificada.py`:
+- Padroniza todos os CSVs de fonte para **um esquema unificado** de colunas.
+- **Deduplica por DOI** (com fallback por título normalizado sem acentos/pontuação).
+- Grava um **registro de auditoria** (`data/_auditoria_mineracao.json`) com timestamp, total, volume por fonte/ano/idioma — pré-requisito metodológico de replicabilidade.
+
+### 5.5. Dashboard Multi-Fonte
+
+O `app_principal.py` (Aba 1) ganhou:
+- **Seletor de fonte** (Todas / OpenAlex / Lume UFRGS / etc.).
+- **Gráfico de cobertura por fonte**.
+- **Recorte temporal** (`select_slider` de anos).
+- Rótulos legíveis das fontes na tabela e nos gráficos.
+
+### 5.6. Barreiras Técnicas Identificadas (e impacto no planejamento)
+
+| Barreira | Observação | Tratamento |
+| :--- | :--- | :--- |
+| Cloudflare/JS challenge em agregadores nacionais (Oasisbr, BDTD) | Bloqueio programático de acesso direto | Harvester resiliente registra `erro` e segue para endpoints abertos; alternativa futura: *render* headless ou dump agregado |
+| Timeout em alguns endpoints OAI (SciELO) | Conectividade/bot-protection | Tratamento por endpoint, retry implícito, sem quebra do pipeline |
+| Encoding cp1252 no console Windows | Emojis/BOM nos prints podiam quebrar execução | `sys.stdout.reconfigure(encoding="utf-8")` nos entrypoints |
+
+### 5.7. Próximas Fases (Roteiro)
+
+1. **Ampliar `FONTES_OAI`** com mais DSpace de IFs/Universidades (validar endpoint individualmente) e SciELO quando disponível.
+2. **CORDIS (UE)** e **Zenodo** via REST (macrocategorias 5 e 2) para literatura cinzenta de inovação.
+3. **Patentes (fase 2)**: WIPO PATENTSCOPE / EPO OPS para vocabulário de inovação *hard science*.
+4. **NLP avançado**: n-gramas, NER (instrumentos/instituições) e matriz de coocorrência no dashboard.
+

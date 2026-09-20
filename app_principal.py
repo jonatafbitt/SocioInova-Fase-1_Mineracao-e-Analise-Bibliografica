@@ -16,6 +16,14 @@ from pathlib import Path
 # Caminho para prompts
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 
+# Módulo de síntese do estado da arte (pré-processado em scripts/gerar_estado_arte.py)
+import sys
+scripts_dir = Path(__file__).parent / "scripts"
+if str(scripts_dir) not in sys.path:
+    sys.path.insert(0, str(scripts_dir))
+import sintese_estado_arte as sea
+import analisar_termos_pdfs as atp
+
 def carregar_prompt(nome_arquivo):
     """Carrega um prompt do diretório prompts/."""
     prompt_file = PROMPTS_DIR / nome_arquivo
@@ -38,7 +46,7 @@ if 'tipo_analise' not in st.session_state:
 PASTA_DATA = "data/producoes_mineradas.csv"
 PASTA_PDFS = "meus_pdfs"
 DB_DIR = "data/vector_db"
-NOME_RELATORIO_LOCAL = "Relatorio_Consolidado_SocIA.pdf"
+NOME_RELATORIO_LOCAL = "Relatorio_Consolidado_SocioInova.pdf"
 
 # --- 3. FUNÇÕES DE SUPORTE (LÓGICA E PDF) ---
 def formatar_texto_nome(nome_str):
@@ -103,7 +111,7 @@ def gerar_pdf(titulo_obra, conteudo_analise, tipo_analise, referencia_abnt, mode
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", 'B', 16)
-    pdf.cell(200, 10, txt="Soc(IA) - Relatorio de Auditoria", ln=True, align='C')
+    pdf.cell(200, 10, txt="SocioInova - Relatorio de Auditoria", ln=True, align='C')
     pdf.ln(10)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 10, txt="Referencia Bibliografica (ABNT):", ln=True)
@@ -121,7 +129,7 @@ def gerar_relatorio_consolidado(lista_analises):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", 'B', 18)
-    pdf.cell(200, 10, txt="Soc(IA) - Relatorio Consolidado de Pesquisa", ln=True, align='C')
+    pdf.cell(200, 10, txt="SocioInova - Relatorio Consolidado de Pesquisa", ln=True, align='C')
     pdf.ln(10)
     for item in lista_analises:
         pdf.set_font("Arial", 'B', 12)
@@ -142,9 +150,21 @@ st.set_page_config(page_title="Observatório de Inovação", layout="wide")
 
 # Barra Lateral Consolidada
 st.sidebar.image("https://cdn-icons-png.flaticon.com/512/2103/2103433.png", width=100)
-st.sidebar.title("🔬 Soc(IA) - Gestão")
+st.sidebar.title("🔬 SocioInova - Gestão")
 
-modelo_ia = st.sidebar.selectbox("Cérebro da IA (LLM):", ["phi3", "llama3", "mistral", "qwen2:1.5b"])
+opcoes_modelo = [
+    ("qwen2:1.5b", "qwen2:1.5b — (multilíngue, leve; padrão da síntese)"),
+    ("phi3", "phi3 — (rápido, tarefas gerais)"),
+    ("llama3", "llama3 — (melhor redação acadêmica)"),
+    ("mistral", "mistral — (auditoria de viés teórico)"),
+    ("qwen3:1.7b", "qwen3:1.7b — (nova geração, mais capaz que qwen2)"),
+    ("qwen3:4b", "qwen3:4b — (mais robusto, exige mais memória)"),
+    ("gemma3:4b", "gemma3:4b — (multimodal, contexto maior)"),
+    ("phi4-mini", "phi4-mini — (compacto e capaz)"),
+]
+mapa_modelo = {k: rot for k, rot in opcoes_modelo}
+modelo_ia = st.sidebar.selectbox("Cérebro da IA (LLM):", [k for k, _ in opcoes_modelo],
+                                 format_func=lambda k: mapa_modelo[k])
 
 st.sidebar.divider()
 if st.sidebar.button("☁️ Sincronizar com Google Drive"):
@@ -165,7 +185,7 @@ if num_itens > 0:
     with open(NOME_RELATORIO_LOCAL, "wb") as f:
         f.write(pdf_total)
     
-    st.sidebar.download_button("📥 Baixar Relatório Consolidado", data=pdf_total, file_name="Relatorio_SocIA.pdf", mime="application/pdf")
+    st.sidebar.download_button("📥 Baixar Relatório Consolidado", data=pdf_total, file_name="Relatorio_SocioInova.pdf", mime="application/pdf")
     
     if st.sidebar.button("🗑️ Limpar Cesto"):
         st.session_state.cesto_analises = []
@@ -174,8 +194,8 @@ if num_itens > 0:
         st.rerun()
 
 # Corpo Principal
-st.title("🎓 Soc(IA) - Mineração sobre Sociologia da Inovação")
-aba_web, aba_local = st.tabs(["🌐 Pesquisa OpenAlex", "📚 Minha Biblioteca (PDFs)"])
+st.title("🎓 SocioInova Fase 1 - Mineração e Análise Bibliográfica")
+aba_web, aba_estado, aba_local = st.tabs(["🌐 Pesquisa OpenAlex", "🗺️ Estado da Arte da Inovação", "📚 Minha Biblioteca (PDFs)"])
 
 # --- ABA 1: WEB ---
 with aba_web:
@@ -189,10 +209,50 @@ with aba_web:
             'autores': ['autores', 'authors', 'author_names'],
             'resumo': ['resumo', 'abstract', 'description'],
             'idioma': ['idioma', 'language'],
-            'eixo_tematico': ['eixo_tematico', 'eixo', 'tematico', 'eixos']
+            'eixo_tematico': ['eixo_tematico', 'eixo', 'tematico', 'eixos'],
+            'fonte': ['fonte', 'source', 'base']
         }
         col_enc = {k: next((c for c in v if c in df.columns), None) for k, v in colunas_possiveis.items()}
-        
+
+        # --- SELETOR MULTI-FONTE + COBERTURA POR FONTE ---
+        if col_enc['fonte']:
+            fontes_disponiveis = sorted(df[col_enc['fonte']].dropna().unique())
+            nomes_fonte = {
+                'OpenAlex': 'OpenAlex',
+                'producoes_openalex': 'OpenAlex',
+                'openalex': 'OpenAlex',
+                'producoes_oai': 'OAI-PMH / Repositórios',
+                'Lume_UFRGS': 'Lume UFRGS',
+            }
+            rotulo_fontes = {f: nomes_fonte.get(str(f), str(f)) for f in fontes_disponiveis}
+            fonte_sel = st.selectbox("🗂️ Fonte da base:", ["Todas"] + fontes_disponiveis,
+                                     format_func=lambda x: rotulo_fontes.get(str(x), str(x)))
+            if fonte_sel != "Todas":
+                df = df[df[col_enc['fonte']].astype(str) == str(fonte_sel)]
+
+            with st.expander("📈 Cobertura por Fonte", expanded=False):
+                df_cov = df[col_enc['fonte']].value_counts().reset_index()
+                df_cov.columns = ['Fonte', 'Total']
+                df_cov['Fonte'] = df_cov['Fonte'].map(rotulo_fontes)
+                fig_cov = px.bar(df_cov, x='Fonte', y='Total', title="Registros por Fonte",
+                                 color='Fonte', color_discrete_sequence=px.colors.qualitative.Set2)
+                st.plotly_chart(fig_cov, use_container_width=True)
+                st.caption("Fonte de origem de cada registro (OpenAlex, OAI-PMH/repositórios etc.).")
+        else:
+            st.caption("⚠️ Coluna de fonte não detectada na base. Considere rodar a limpeza unificada.")
+
+        # --- FILTRO TEMPORAL (opcional) ---
+        if col_enc['ano']:
+            anos = sorted(df[col_enc['ano']].dropna().astype(int).unique())
+            if len(anos) > 1:
+                cmin, cmax = int(anos[0]), int(anos[-1])
+                sel_min, sel_max = st.select_slider(
+                    "📅 Recorte temporal:",
+                    options=anos,
+                    value=(cmin, cmax),
+                )
+                df = df[(df[col_enc['ano']] >= sel_min) & (df[col_enc['ano']] <= sel_max)]
+
         st.subheader("📊 Panorama da Produção")
         g1, g2, g3 = st.columns(3)
         with g1:
@@ -365,7 +425,211 @@ OBRA: {art[col_enc['resumo']]}"""
                             })
                             st.toast("Adicionado ao relatório!", icon="✅")
 
-# --- ABA 2: LOCAL (REVISADA E CORRETA) ---
+# --- ABA 2: ESTADO DA ARTE DA INOVAÇÃO ---
+with aba_estado:
+    st.subheader("🗺️ Estado da Arte da Inovação")
+    st.caption("Leitura de conjunto (macro) do campo a partir do corpus minerado: gramática nacional × internacional e os lugares, usos e sentidos do recorte social, de código aberto e emancipador.")
+
+    INDICES = "data/indices_estado_arte.csv"
+    DNA = "data/dna_inovacao.csv"
+    COOC = "data/coocorrencia_estado_arte.json"
+    SINT = "data/_sintese_estado_arte.json"
+    SENT = "data/_sintese_sentidos.txt"
+
+    if not os.path.exists(INDICES) or not os.path.exists(DNA):
+        st.warning("Índices do estado da arte não encontrados. Rode: `python scripts/gerar_estado_arte.py`")
+        st.stop()
+
+    ind = pd.read_csv(INDICES)
+    ind = ind.fillna("")
+    ind['ano'] = pd.to_numeric(ind['ano'], errors='coerce')
+
+    # --- Filtros rápidos (não usam IA — instantâneos) ---
+    c_f1, c_f2, c_f3 = st.columns(3)
+    with c_f1:
+        rec_sel = st.multiselect("Recorte geográfico:", ["nacional", "internacional"],
+                                 default=["nacional", "internacional"])
+    with c_f2:
+        anos_disp = sorted(ind['ano'].dropna().astype(int).unique().tolist())
+        if len(anos_disp) > 1:
+            faixa = st.select_slider("Período:", options=anos_disp,
+                                     value=(int(anos_disp[0]), int(anos_disp[-1])))
+            ind = ind[(ind['ano'] >= faixa[0]) & (ind['ano'] <= faixa[1])]
+    with c_f3:
+        cls_sel = st.multiselect("Classe de relevância:", ["nucleo", "contexto"],
+                                 default=["nucleo"])
+    ind = ind[ind['recorte_geo'].isin(rec_sel)]
+    ind = ind[ind['nucleo_contexto'].isin(cls_sel)]
+
+    # --- Métricas-resumo ---
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Registros no recorte", len(ind))
+    m2.metric("Núcleo (lente forte)", int((ind['nucleo_contexto'] == 'nucleo').sum()))
+    m3.metric("Recorte social", int(ind['flag_social'].sum()))
+    m4.metric("Emancipatório", int(ind['flag_emancipatorio'].sum()))
+
+    # --- 1. SÍNTESE GLOBAL (macro) ---
+    st.divider()
+    st.markdown("### 1) Síntese Global — a gramática do campo")
+    if os.path.exists(SINT):
+        with open(SINT, encoding="utf-8") as f:
+            cache_sint = json.load(f)
+        # pega a primeira entrada do cache (pré-computada)
+        payload = next(iter(cache_sint.values()), None)
+        if payload and "recortes" in payload:
+            rot_geo = {"nacional": "🇧🇷 Nacional", "internacional": "🌎 Internacional"}
+            tab_n, tab_i = st.tabs([rot_geo.get("nacional", "Nacional"), rot_geo.get("internacional", "Internacional")])
+            with tab_n:
+                st.markdown(payload["recortes"].get("nacional", "_indisponível_"))
+            with tab_i:
+                st.markdown(payload["recortes"].get("internacional", "_indisponível_"))
+            st.caption(f"Modelo: {payload.get('modelo')} · gerado em {payload.get('timestamp')} · pré-computado em scripts/gerar_estado_arte.py")
+        else:
+            st.info("Síntese ainda não gerada. Rode `python scripts/gerar_estado_arte.py`.")
+    else:
+        st.info("Síntese não encontrada. Rode `python scripts/gerar_estado_arte.py` para gerar o estado da arte automaticamente (pode levar alguns minutos).")
+
+    # --- 2. REDE DE CO-OCORRÊNCIA ---
+    st.divider()
+    st.markdown("### 2) Rede de Co-ocorrência de Conceitos")
+    st.caption("Nós = termos nucleares da gramática do campo; arestas = conceitos que aparecem juntos nos mesmos registros.")
+    if os.path.exists(COOC):
+        with open(COOC, encoding="utf-8") as f:
+            dados_cooc = json.load(f)
+        nos = dados_cooc.get("nos", [])
+        arestas = dados_cooc.get("arestas", [])
+        if nos and arestas:
+            import math
+            import plotly.graph_objects as go
+            df_no = pd.DataFrame(nos)
+            df_arest = pd.DataFrame(arestas)
+            # Posicionamento circular simples (sem dependência externa)
+            n_nodes = len(df_no)
+            pos = {}
+            for idx, (_, node) in enumerate(df_no.iterrows()):
+                ang = 2 * math.pi * idx / n_nodes if n_nodes else 0
+                pos[node["id"]] = (math.cos(ang), math.sin(ang))
+            edge_trace_x, edge_trace_y, edge_weights = [], [], []
+            for _, a in df_arest.iterrows():
+                u, v = a["source"], a["target"]
+                if u not in pos or v not in pos:
+                    continue
+                x0, y0 = pos[u]
+                x1, y1 = pos[v]
+                edge_trace_x += [x0, x1, None]
+                edge_trace_y += [y0, y1, None]
+                edge_weights.append(float(a.get("weight", 1)))
+            node_x, node_y, node_freq, node_labels = [], [], [], []
+            for _, node in df_no.iterrows():
+                x, y = pos[node["id"]]
+                node_x.append(x)
+                node_y.append(y)
+                node_freq.append(float(node["freq"]))
+                node_labels.append(node["label"])
+            max_f = max(node_freq) if node_freq else 1
+            edge_trace = go.Scatter(x=edge_trace_x, y=edge_trace_y, mode="lines",
+                                    line=dict(width=2, color="#888"),
+                                    hoverinfo="none")
+            node_trace = go.Scatter(x=node_x, y=node_y, mode="markers+text", text=node_labels,
+                                    textposition="top center",
+                                    marker=dict(size=[20 + (f / max_f) * 60 for f in node_freq],
+                                                color="#2255aa", line_width=2, line_color="#fff"),
+                                    hovertext=[lbl for lbl in node_labels], hoverinfo="text")
+            fig_cooc = go.Figure(data=[edge_trace, node_trace],
+                                 layout=go.Layout(title="Co-ocorrência de conceitos", showlegend=False,
+                                                  hovermode="closest",
+                                                  xaxis=dict(showgrid=False, zeroline=False, visible=False),
+                                                  yaxis=dict(showgrid=False, zeroline=False, visible=False),
+                                                  margin=dict(l=20, r=20, t=40, b=20)))
+            st.plotly_chart(fig_cooc, use_container_width=True)
+            with st.expander("🔢 Matriz (top arestas)"):
+                df_arest_sorted = df_arest.sort_values("weight", ascending=False).head(20)
+                st.dataframe(df_arest_sorted, use_container_width=True)
+        else:
+            st.info("Matriz de co-ocorrência vazia (recorte pequeno).")
+    else:
+        st.info("Matriz não encontrada. Rode `python scripts/gerar_estado_arte.py`.")
+
+    # --- 3. MAPA DOS ESPAÇOS PÚBLICOS ---
+    st.divider()
+    st.markdown("### 3) Mapa dos Espaços Públicos de Inovação")
+    st.caption("Quem produz e onde: instituições/veículos de produção e distribuição territorial (UF) das fontes de direito público.")
+    # Top instituições detectadas nos resumos + veículos
+    coli = ind[ind['instituicoes'] != ""]
+    if not coli.empty:
+        todas_inst = []
+        for vals in coli['instituicoes']:
+            todas_inst += [v.strip() for v in str(vals).split(";") if v.strip()]
+        df_inst = pd.Series(todas_inst).value_counts().head(15).reset_index()
+        df_inst.columns = ['Instituição', 'Registros']
+        fig_inst = px.bar(df_inst, x='Registros', y='Instituição', orientation='h',
+                          title="Top 15 Instituições citadas nos registros", color='Registros',
+                          color_continuous_scale='Blues')
+        st.plotly_chart(fig_inst, use_container_width=True)
+    else:
+        st.caption("Nenhuma instituição detectada nos resumos.")
+
+    # Mapa das UF (a partir das fontes)
+    UF_POR_FONTE = {
+        "IFBA": "BA", "IFMG": "MG", "CEFETMG": "MG", "IFRS": "RS", "Lume_UFRGS": "RS",
+        "IFSC": "SC", "IFAM": "AM", "IFPB": "PB", "IFPE": "PE", "UFOP": "MG",
+        "UFCA": "CE", "UFSCar": "SP", "IFRR": "RR", "IFSP": "SP", "IFB": "DF",
+        "IFMS": "MS",
+    }
+    df_br = ind[ind['fonte'].isin(UF_POR_FONTE.keys())].copy()
+    df_br['uf'] = df_br['fonte'].map(UF_POR_FONTE)
+    if not df_br.empty:
+        contagem_uf = df_br['uf'].value_counts().reset_index()
+        contagem_uf.columns = ['UF', 'Registros']
+        ordem_uf = contagem_uf.sort_values('Registros', ascending=False)['UF'].tolist()
+        fig_uf = px.bar(contagem_uf, x='UF', y='Registros', category_orders={'UF': ordem_uf},
+                        title='Produção por UF (fontes públicas OAI)',
+                        color='Registros', color_continuous_scale='Blues')
+        st.plotly_chart(fig_uf, use_container_width=True)
+        st.caption("Distribuição por unidade federativa das fontes de direito público (IFs/universidades).")
+
+    # --- 4. ANÁLISE DE SENTIDOS (SEMIÓTICA) ---
+    st.divider()
+    st.markdown("### 4) Análise de Sentidos — social, código aberto e emancipação")
+    st.caption("Leitura semiótica: como o recorte social/aberto/emancipador é usado — performático-mercadológico (mimetismo) vs. emancipatório-situado.")
+    k1, k2, k3 = st.columns(3)
+    k1.metric("Código aberto", int(ind['flag_codigo_aberto'].sum()))
+    k2.metric("Sentido emancipatório (ocorrências)", int(ind['n_sentidos_emancipacao'].sum()))
+    k3.metric("Sentido mimetista (ocorrências)", int(ind['n_sentidos_mimetismo'].sum()))
+    if os.path.exists(SENT):
+        with open(SENT, encoding="utf-8") as f:
+            st.markdown(f.read())
+    else:
+        st.info("Síntese de sentidos não encontrada. Rode `python scripts/gerar_estado_arte.py`.")
+
+    # --- DNA Científico do recorte ---
+    st.divider()
+    st.markdown("### 🧬 DNA Científico do Recorte")
+    if os.path.exists(DNA):
+        df_dna = pd.read_csv(DNA)
+        rotulos_dna = {
+            "inovacao": "Inovação", "economia_solidaria": "Economia Solidária",
+            "governanca": "Governança", "politicas_publicas": "Políticas Públicas",
+            "territorio_desenvolvimento_local": "Território / Desenvolvimento Local",
+            "institutos_federais": "Institutos Federais", "patente": "Patente",
+            "emancipacao": "Emancipação", "tecnologia_social": "Tecnologia Social",
+            "transferencia": "Transferência de Tecnologia", "propriedade_intelectual": "Propriedade Intelectual",
+        }
+        df_dna['Conceito'] = df_dna['Conceito'].map(lambda x: rotulos_dna.get(str(x), str(x)))
+        fig_dna = px.bar(df_dna, x='Frequência', y='Conceito', orientation='h',
+                         title="Assinatura conceitual do corpus (termos nucleares)",
+                         color='Frequência', color_continuous_scale='Blues')
+        st.plotly_chart(fig_dna, use_container_width=True)
+
+    with st.expander("ℹ️ Regenerar o Estado da Arte (IA automática)"):
+        st.markdown(
+            "A síntese global e a leitura de sentidos são **pré-computadas** (para agilidade) "
+            "pelo script abaixo. Processa o corpus em lote com a IA local e pode levar alguns "
+            "minutos. Para atualizar, rode no terminal:\n\n"
+            "```\npython scripts/gerar_estado_arte.py <modelo>\n```\n"
+            "Ex.: `python scripts/gerar_estado_arte.py qwen2:1.5b`")
+
+# --- ABA 3: LOCAL (REVISADA E CORRETA) ---
 with aba_local:
     st.subheader("📚 Biblioteca Local (PDFs)")
 
@@ -373,7 +637,7 @@ with aba_local:
     with st.expander("📚 Matriz Epistemológica: Entenda os Critérios da Auditoria"):
         st.markdown("""
         ### Matriz de Análise: Inovação por Mimetismo vs. Inovação Situada
-        Esta matriz orienta a Inteligência Analítica do Soc(IA) na classificação dos trabalhos minerados.
+        Esta matriz orienta a Inteligência Analítica do SocioInova na classificação dos trabalhos minerados.
         A análise está aberta a toda a **Rede Federal de Educação Profissional, Científica e Tecnológica**.
         
         | Dimensão Analítica | Inovação por Mimetismo (Dependente) | Inovação Situada (Emancipatória) |
@@ -413,13 +677,131 @@ with aba_local:
     if st.button("🔄 Escanear e Indexar PDFs"):
         if arquivos_pdf:
             with st.spinner("Indexando..."):
-                documentos = []
-                for arq in arquivos_pdf:
-                    loader = PyPDFLoader(os.path.join(PASTA_PDFS, arq))
-                    documentos.extend(loader.load())
-                splits = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200).split_documents(documentos)
-                Chroma.from_documents(documents=splits, embedding=OllamaEmbeddings(model=modelo_ia), persist_directory=DB_DIR)
-                st.success("✅ Biblioteca pronta!")
+                # Indexação incremental (com metadados de origem/página) + cache de texto plano
+                v_db = Chroma(persist_directory=DB_DIR,
+                              embedding_function=OllamaEmbeddings(model="nomic-embed-text"))
+                processados = atp.indexar_pdfs(v_db, pasta_pdfs=PASTA_PDFS)
+                st.success(f"✅ Biblioteca pronta! {len(processados)} PDF(s) indexado(s).")
+        else:
+            st.warning("Nenhum PDF encontrado para indexar.")
+
+    # --- ANÁLISE DE TERMOS (Iteração 1): localização literal nos PDFs ---
+    st.divider()
+    st.markdown("#### 🔎 Localizar Termos nos PDFs")
+    with st.expander("ℹ️ Como funciona"):
+        st.markdown(
+            "Busca **literal** (case-insensitive, ignorando acentos) nos textos dos PDFs "
+            "já escaneados. Retorna quantas vezes o termo aparece em cada documento, em quais "
+            "páginas e os trechos de contexto. Use campo livre ou selecione um dicionário temático.")
+
+    col_atp_termos, col_atp_dict = st.columns([3, 2])
+    with col_atp_termos:
+        termos_livres = st.text_input("Termos (separados por vírgula):",
+                                      placeholder="ex.: inovação, decolonial, economia solidária")
+    with col_atp_dict:
+        opcoes_dict = {
+            "Nenhum (só campo livre)": None,
+            "Eixos nucleares (todos)": sea.TERMOS_NUCLEARES,
+            "Mimetismo": sea.TERMOS_MIMETISMO,
+            "Emancipatório": sea.TERMOS_EMANCIPA,
+            "Código aberto / ciência aberta": sea.TERMOS_CODIGO_ABERTO,
+        }
+        rotulo_dict = st.selectbox("Ou use um dicionário temático:", list(opcoes_dict.keys()))
+    selecionar_todos_dict = st.checkbox("Selecionar todos os termos do dicionário escolhido",
+                                        value=False, key="atp_todos_dict")
+
+    termos = [t.strip() for t in termos_livres.split(",") if t.strip()] if termos_livres else []
+    dicionario = opcoes_dict.get(rotulo_dict)
+    if dicionario:
+        if isinstance(dicionario, dict):  # eixos nucleares -> expande valores em uma lista
+            termos_dict = [t for lista in dicionario.values() for t in lista]
+        else:
+            termos_dict = list(dicionario)
+        if selecionar_todos_dict:
+            termos = list(dict.fromkeys(termos + termos_dict))
+        else:
+            termos_selecionados = st.multiselect(
+                "Escolher termos do dicionário:", termos_dict,
+                key="atp_multiselect_dict")
+            termos = list(dict.fromkeys(termos + termos_selecionados))
+
+    if st.button("🔍 Localizar Termos", type="primary"):
+        if not termos:
+            st.warning("Digite termo(s) ou selecione itens do dicionário temático.")
+        else:
+            with st.spinner("Localizando termos nos PDFs..."):
+                resultado = atp.localizar_termos(termos, pasta_pdfs=PASTA_PDFS)
+
+            termos_achados = [t for t in termos if resultado["por_termo"].get(t)]
+            if not termos_achados:
+                st.warning("Nenhuma ocorrência encontrada para os termos informados.")
+            else:
+                st.session_state["atp_resultado"] = resultado
+                st.session_state["atp_termos"] = termos_achados
+
+    if "atp_resultado" in st.session_state:
+        resultado = st.session_state["atp_resultado"]
+        termos_achados = st.session_state.get("atp_termos", [])
+        tabela = atp.construir_tabela(resultado)
+
+        st.markdown(f"#### Resultado — {len(tabela)} documento(s) com ocorrências")
+        st.dataframe(pd.DataFrame(tabela), use_container_width=True)
+
+        # Gráfico: Top PDFs por ocorrências
+        if tabela:
+            df_plot = pd.DataFrame(tabela)[["PDF", "Ocorrências"]].head(15)
+            fig_rank = px.bar(df_plot, x="Ocorrências", y="PDF", orientation="h",
+                              title="Top PDFs por ocorrência do(s) termo(s)",
+                              color="Ocorrências", color_continuous_scale="Blues")
+            fig_rank.update_layout(yaxis={"categoryorder": "total ascending"})
+            st.plotly_chart(fig_rank, use_container_width=True)
+
+        # Heatmap termo x documento (quando há 2+ termos)
+        if len(termos_achados) >= 2:
+            df_heat = pd.DataFrame([
+                {**{"PDF": arq}, **{t: info["contagens"].get(t, 0) for t in termos_achados}}
+                for arq, info in resultado["por_arquivo"].items()
+            ])
+            df_heat = df_heat[df_heat[[t for t in termos_achados]].sum(axis=1) > 0]
+            if not df_heat.empty:
+                fig_heat = px.imshow(df_heat.set_index("PDF"), labels=dict(x="Termo", y="PDF", color="Ocorrências"),
+                                     title="Matriz Termo × Documento", color_continuous_scale="YlGnBu")
+                st.plotly_chart(fig_heat, use_container_width=True)
+
+        # Trechos de contexto por termo
+        for t in termos_achados:
+            ocorrencias = resultado["por_termo"].get(t, [])
+            with st.expander(f"📄 Termo «{t}» — {len(ocorrencias)} ocorrência(s)"):
+                for oc in ocorrencias[:30]:
+                    st.markdown(f"**{oc['arquivo']}** — pág. {oc['pagina']}")
+                    st.markdown(f"> {oc['trecho']}")
+                if len(ocorrencias) > 30:
+                    st.caption(f"Mostrando 30 de {len(ocorrencias)} ocorrências.")
+
+        # --- Camada de interpretação por IA (Iteração 2) ---
+        st.divider()
+        st.markdown("#### 🤖 Interpretação por IA")
+        st.caption("O modelo lê os trechos encontrados e sintetiza como o(s) termo(s) são "
+                   "mobilizados na biblioteca. Baseia-se apenas na busca literal, sem usar embeddings.")
+        if st.button("✨ Gerar interpretação com IA", type="primary"):
+            with st.spinner("IA lendo os trechos e sintetizando..."):
+                interpretacao = atp.interpretar_com_ia(
+                    resultado, termos_achados, modelo=modelo_ia)
+                st.session_state["atp_interpretacao"] = interpretacao
+
+        if st.session_state.get("atp_interpretacao"):
+            st.markdown(st.session_state["atp_interpretacao"])
+            if st.button("➕ Adicionar interpretação ao Relatório do Dia"):
+                st.session_state.cesto_analises.append({
+                    "obra": "Interpretação IA — Localização de Termos",
+                    "referencia": "Biblioteca Interna",
+                    "tipo": "Interpretação de Termos (IA)",
+                    "modelo": modelo_ia,
+                    "conteudo": (
+                        f"Termos: {', '.join(termos_achados)}\n\n"
+                        f"{st.session_state['atp_interpretacao']}")
+                })
+                st.toast("✅ Interpretação salva no cesto!")
     
     pergunta_local = st.text_input("🧐 Analisar PDFs locais com Lente Decolonial:")
     

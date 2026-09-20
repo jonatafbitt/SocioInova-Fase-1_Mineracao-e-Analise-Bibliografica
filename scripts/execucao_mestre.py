@@ -6,7 +6,7 @@ from pydrive2.drive import GoogleDrive
 # --- CONFIGURAÇÕES DE CAMINHOS ---
 ARQUIVO_MINERADO = "data/producoes_mineradas.csv"
 ARQUIVO_DNA = "data/perfil_institucional.csv"
-ARQUIVO_RELATORIO = "Relatorio_Consolidado_SocIA.pdf"
+ARQUIVO_RELATORIO = "Relatorio_Consolidado_SocioInova.pdf"
 ID_PASTA_DOUTORADO = "SEU_ID_DA_PASTA_NO_DRIVE" # Troque pelo ID real da sua pasta
 
 def autenticar_drive():
@@ -36,16 +36,16 @@ def realizar_upload(drive, caminho_local, nome_no_drive):
         print(f"⚠️ Arquivo não encontrado: {caminho_local}")
 
 def consolidar_e_sincronizar():
-    print("☁️ Iniciando Sincronização Mestre Soc(IA)...")
+    print("☁️ Iniciando Sincronização Mestre SocioInova...")
     
     # 1. Autenticação Única
     drive = autenticar_drive()
 
     # 2. Upload da Base de Artigos (CSV)
-    realizar_upload(drive, f"../{ARQUIVO_MINERADO}", "SocIA_Producoes_Mineradas.csv")
+    realizar_upload(drive, f"../{ARQUIVO_MINERADO}", "SocioInova_Producoes_Mineradas.csv")
 
     # 3. Upload do DNA Institucional (CSV)
-    realizar_upload(drive, f"../{ARQUIVO_DNA}", "SocIA_DNA_Institucional.csv")
+    realizar_upload(drive, f"../{ARQUIVO_DNA}", "SocioInova_DNA_Institucional.csv")
 
     # 4. Upload do Relatório Consolidado em PDF (O 'Diário de Bordo')
     data_hoje = datetime.date.today().strftime("%Y-%m-%d")
@@ -53,7 +53,7 @@ def consolidar_e_sincronizar():
     realizar_upload(drive, f"../{ARQUIVO_RELATORIO}", nome_pdf_drive)
 
     # 5. Upload do Relatório Metodológico (Markdown)
-    realizar_upload(drive, "../relatorio_dificuldades_tecnicas_RAG.md", "SocIA_Relatorio_Metodologico.md")
+    realizar_upload(drive, "../relatorio_dificuldades_tecnicas_RAG.md", "SocioInova_Relatorio_Metodologico.md")
 
     print("\n📦 Todos os ativos da tese estão protegidos no Google Drive!")
 
