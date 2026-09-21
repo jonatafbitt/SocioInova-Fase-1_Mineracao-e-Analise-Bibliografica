@@ -1,6 +1,6 @@
 🔬 SocioInova Fase 1: Mineração e Análise Bibliográfica
 
-Este repositório contém o código-fonte do SocioInova (Fase 1: Mineração e Análise Bibliográfica), uma ferramenta de pesquisa desenvolvida como parte da tese de doutorado: "UMA LENTE SOCIOLÓGICA SOBRE A GOVERNANÇA DA INOVAÇÃO NOS INSTITUTOS FEDERAIS: INTERFACES ANALÍTICAS PARA UMA COMPREENSÃO DO “SOCIAL” NA INOVAÇÃO PÚBLICA".
+Este repositório contém o código-fonte do SocioInova (Fase 1: Mineração e Análise Bibliográfica), uma ferramenta de pesquisa desenvolvida como parte de tese de doutorado.
 A ferramenta utiliza Processamento de Linguagem Natural (PLN) e arquitetura RAG (Retrieval-Augmented Generation) para realizar auditorias sociológicas e decoloniais em produções científicas e documentos institucionais.
 
 🚀 Funcionalidades Principais
